@@ -18,7 +18,7 @@ describe('App', () => {
     ).toHaveTextContent('Scrum App');
   });
 
-  it('Renders a tile on inital load', () => {
+  it('Renders a Idea on inital load', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -31,7 +31,7 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
   });
 
-  it('Adds a tile', async () => {
+  it('Adds a Idea', async () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -54,7 +54,7 @@ describe('App', () => {
     // mroe specfic text box...
   });
 
-  it('Deletes a tile', async () => {
+  it('Deletes a Idea', async () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -78,7 +78,7 @@ describe('App', () => {
     expect(screen.queryAllByRole('textbox')).toHaveLength(4);
   });
 
-  it('Edits a tile', async () => {
+  it('Edits a Idea', async () => {
     // JEst mock the dates
     render(
       <MemoryRouter initialEntries={['/']}>

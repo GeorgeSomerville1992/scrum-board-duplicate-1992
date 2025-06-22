@@ -8,7 +8,6 @@ const options = Object.values(sortApi).map((sort) => {
   };
 });
 
-// eslint-disable-next-line react/function-component-definition
 export const Sort = ({ handleIdeasSort }) => {
   return (
     <select onChange={handleIdeasSort} name="sort" id="sort" defaultValue="">

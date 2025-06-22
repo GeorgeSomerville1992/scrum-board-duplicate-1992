@@ -1,27 +1,27 @@
 import { useState } from 'react';
-import moment from 'moment';
-import type { Idea, IdeaContent } from '../../types/index';
+import { format } from "date-fns";
+import type { IdeaType } from '../../types/index';
 
-type TileProps = {
-  idea: Idea;
-  handleEdit: (id: number, ideadObj: IdeaContent) => void;
+type IdeaProps = {
+  idea: IdeaType;
+  handleEdit: (id: number, ideaObj: IdeaType['content']) => void;
   handleDelete?: (id: number) => void;
   autoFocus: true;
-  handleCreate: (id: number, ideadObj: IdeaContent) => void;
+  handleCreate: (ideaObj: IdeaType['content']) => void;
 };
 
-export const Tile = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }: TileProps) => {
+export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }: IdeaProps) => {
   const { createdAt, modifiedAt } = idea.content;
   const [title, setTitle] = useState<string>(idea.content.title);
   const [description, setDescription] = useState<string>(idea.content.description);
-
+  console.log('idea ==>', idea);
   const onSubmit = () => {
     const ideaObj = {
       title,
       description,
-      createdAt: moment().format(),
+      createdAt: new Date(),
     };
-    handleCreate(idea.id, ideaObj);
+    handleCreate(ideaObj);
 
     setTitle('');
     setDescription('');
@@ -31,8 +31,10 @@ export const Tile = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
     const ideaObj = {
       title,
       description,
-      modifiedAt: moment().format(),
+      modifiedAt: new Date(),
     };
+
+    console.log('On Edit', ideaObj);
 
     handleEdit(idea.id, ideaObj);
   };
@@ -62,8 +64,8 @@ export const Tile = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         maxLength={140}
         required
       />
-      {modifiedAt ? <p>last modified at {moment(modifiedAt).format('MMMM Do YYYY, h:mm:ss a')}</p> : ''}
-      {createdAt ? <p>Last created at {moment(createdAt).format('MMMM Do YYYY, h:mm:ss a')}</p> : ''}
+      {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
+      {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? <button onClick={onEdit}>Edit</button> : <button onClick={onSubmit}>Add</button>}
       {handleDelete ? <button onClick={onDelete}>delete</button> : ''}
     </div>

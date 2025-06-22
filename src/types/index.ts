@@ -1,13 +1,11 @@
-export type IdeaContent = {
-  title: string;
-  description: string;
-  createdAt: string;
-  modifiedAt?: string;
-};
-
-export type Idea = {
+export type IdeaType = {
   id: number;
-  content: IdeaContent;
+  content: {
+    title: string;
+    description: string;
+    createdAt?: string | Date;
+    modifiedAt?: string | Date;
+  }
 };
 
 export type FilterNames = 'alphabetically' | 'creationDate';

@@ -1,6 +1,6 @@
-import { Tile } from '../components/Tile/Tile';
+import { Idea } from '../components/Idea/Idea';
 import { sortApi } from '../components/Sort/sortApi';
-import type { Idea, IdeaContent } from '../types/index';
+import type { IdeaType } from '../types/index';
 import { Sort } from '../components/Sort/Sort';
 import { useStorage } from '../hooks/useStorage';
 
@@ -16,13 +16,13 @@ export const Home = () => {
   };
 
   const [ideas, setIdeas] = useStorage('ideas', []);
-
+  console.log('ideads', ideas);
   const handleIdeasSort = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const sortedIdeas = sortApi[event.target.value as keyof typeof sortApi].sort(ideas);
     setIdeas(sortedIdeas);
   };
 
-  const handleCreate = (id: number, idea: IdeaContent) => {
+  const handleCreate = (idea: IdeaType['content']) => {
     const newIdea = {
       id: ideas.length + 1,
       content: idea,
@@ -33,8 +33,8 @@ export const Home = () => {
     });
   };
 
-  const handleEdit = (id: number, idea: IdeaContent) => {
-    const updatedIdea = ideas.find((idea: Idea) => idea.id === id);
+  const handleEdit = (id: number, idea: IdeaType['content']) => {
+    const updatedIdea = ideas.find((idea: IdeaType) => idea.id === id);
 
     if (updatedIdea) {
       updatedIdea.content = {
@@ -49,7 +49,7 @@ export const Home = () => {
   };
 
   const handleDelete = (id: number) => {
-    const filteredIdeas = ideas.filter((idea: Idea) => idea.id !== id);
+    const filteredIdeas = ideas.filter((idea: IdeaType) => idea.id !== id);
 
     setIdeas(() => {
       return filteredIdeas;
@@ -64,15 +64,15 @@ export const Home = () => {
     <section className="">
       <Sort handleIdeasSort={handleIdeasSort} />
       <ul className="">
-        {ideas.map((idea: Idea) => {
+        {ideas.map((idea: IdeaType) => {
           return (
             <li key={idea.id}>
-              <Tile handleCreate={handleCreate} handleEdit={handleEdit} idea={idea} handleDelete={handleDelete} />
+              <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={idea} handleDelete={handleDelete} />
             </li>
           );
         })}
       </ul>
-      <Tile handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />
+      <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />
       <button onClick={handleClear}>Clear</button>
     </section>
   );
