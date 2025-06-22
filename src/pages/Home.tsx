@@ -1,28 +1,81 @@
+import { Tile } from '../components/Tile/Tile';
+import { sortApi } from '../components/Sort/sortApi';
+import type { Idea, IdeaContent } from '../types/index';
+import { Sort } from '../components/Sort/Sort';
+import { useStorage } from '../hooks/useStorage';
+
 export const Home = () => {
+  const defaultIdea = {
+    id: 1,
+    content: {
+      title: '',
+      description: '',
+      createdAt: '',
+      modifiedAt: '',
+    },
+  };
+
+  const [ideas, setIdeas] = useStorage('ideas', []);
+
+  const handleIdeasSort = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const sortedIdeas = sortApi[event.target.value as keyof typeof sortApi].sort(ideas);
+    setIdeas(sortedIdeas);
+  };
+
+  const handleCreate = (id: number, idea: IdeaContent) => {
+    const newIdea = {
+      id: ideas.length + 1,
+      content: idea,
+    };
+
+    setIdeas(() => {
+      return [...ideas, newIdea];
+    });
+  };
+
+  const handleEdit = (id: number, idea: IdeaContent) => {
+    const updatedIdea = ideas.find((idea: Idea) => idea.id === id);
+
+    if (updatedIdea) {
+      updatedIdea.content = {
+        ...updatedIdea.content,
+        ...idea,
+      };
+    }
+
+    setIdeas(() => {
+      return [...ideas];
+    });
+  };
+
+  const handleDelete = (id: number) => {
+    const filteredIdeas = ideas.filter((idea: Idea) => idea.id !== id);
+
+    setIdeas(() => {
+      return filteredIdeas;
+    });
+  };
+
+  const handleClear = () => {
+    setIdeas([]);
+  };
+
   return (
-    <>
-      <h1 className="text-3xl font-bold underline">Hello World</h1>
-      <div className="mx-auto max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-2xl">
-        <div className="md:flex">
-          <div className="md:shrink-0">
-            <img
-              className="h-48 w-full object-cover md:h-full md:w-48"
-              src="/img/building.jpg"
-              alt="Modern building architecture"
-            />
-          </div>
-          <div className="p-8">
-            <div className="text-sm font-semibold tracking-wide text-indigo-500 uppercase">Company retreats</div>
-            <a href="#/" className="mt-1 block text-lg leading-tight font-medium text-black hover:underline">
-              Incredible accommodation for your team
-            </a>
-            <p className="mt-2 text-gray-500">
-              Looking to take your team away on a retreat to enjoy awesome food and take in some sunshine? We have a
-              list of places to do just that.
-            </p>
-          </div>
-        </div>
-      </div>
-    </>
+    <section className="">
+      <Sort handleIdeasSort={handleIdeasSort} />
+      <ul className="">
+        {ideas.map((idea: Idea) => {
+          return (
+            <li key={idea.id}>
+              <Tile handleCreate={handleCreate} handleEdit={handleEdit} idea={idea} handleDelete={handleDelete} />
+            </li>
+          );
+        })}
+      </ul>
+      <Tile handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />
+      <button onClick={handleClear}>Clear</button>
+    </section>
   );
 };
+
+export default Home;

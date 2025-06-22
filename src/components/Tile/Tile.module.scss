@@ -1,0 +1,11 @@
+.tile {
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 20px;
+  gap: 5px;
+
+  color: white;
+}
