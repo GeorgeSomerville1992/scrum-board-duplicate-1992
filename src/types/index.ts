@@ -3,9 +3,12 @@ export type IdeaType = {
   content: {
     title: string;
     description: string;
-    createdAt?: string | Date;
+    createdAt: string | Date;
     modifiedAt?: string | Date;
   }
 };
 
-export type FilterNames = 'alphabetically' | 'creationDate';
+export type IdeaText = {
+  title: string;
+  description: string;
+}

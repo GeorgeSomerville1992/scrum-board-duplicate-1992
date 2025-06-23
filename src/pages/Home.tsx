@@ -1,10 +1,10 @@
 import { Idea } from '../components/Idea/Idea';
-import { sortApi } from '../components/Sort/sortApi';
-import type { IdeaType } from '../types/index';
+import type { IdeaType, IdeaText } from '../types/index';
 import { Sort } from '../components/Sort/Sort';
 import { useStorage } from '../hooks/useStorage';
 
 export const Home = () => {
+  // Default idea used as placeholder.
   const defaultIdea = {
     id: 1,
     content: {
@@ -16,44 +16,44 @@ export const Home = () => {
   };
 
   const [ideas, setIdeas] = useStorage('ideas', []);
-  console.log('ideads', ideas);
-  const handleIdeasSort = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const sortedIdeas = sortApi[event.target.value as keyof typeof sortApi].sort(ideas);
+  const handleIdeasSort = (sortedIdeas: IdeaType[]) => {
     setIdeas(sortedIdeas);
   };
 
-  const handleCreate = (idea: IdeaType['content']) => {
+  const handleCreate = (idea: IdeaText) => {
     const newIdea = {
       id: ideas.length + 1,
       content: idea,
     };
 
-    setIdeas(() => {
-      return [...ideas, newIdea];
-    });
+    setIdeas([...ideas, newIdea]);
   };
 
-  const handleEdit = (id: number, idea: IdeaType['content']) => {
-    const updatedIdea = ideas.find((idea: IdeaType) => idea.id === id);
+  const handleEdit = (id: number, ideaContent: IdeaText) => {
 
-    if (updatedIdea) {
-      updatedIdea.content = {
-        ...updatedIdea.content,
-        ...idea,
-      };
-    }
-
-    setIdeas(() => {
-      return [...ideas];
+    const updatedIdeas = ideas.map((idea: IdeaType) => {
+      // https://web.dev/blog/array-with#:~:text=In%20conclusion%2C%20immutable%20updates%20can,without%20mutating%20the%20original%20array.
+      // use of .with?
+      if (idea.id === id) {
+        return {
+          ...idea,
+          content: {
+            ...idea.content,
+            ...ideaContent,
+            modifiedAt: new Date(),
+          },
+        };
+      }
+      return idea;
     });
+
+    setIdeas([...updatedIdeas]);
   };
 
   const handleDelete = (id: number) => {
     const filteredIdeas = ideas.filter((idea: IdeaType) => idea.id !== id);
 
-    setIdeas(() => {
-      return filteredIdeas;
-    });
+    setIdeas(filteredIdeas);
   };
 
   const handleClear = () => {
@@ -62,18 +62,18 @@ export const Home = () => {
 
   return (
     <section className="">
-      <Sort handleIdeasSort={handleIdeasSort} />
+      <Sort handleIdeasSort={handleIdeasSort} ideas={ideas} />
       <ul className="">
         {ideas.map((idea: IdeaType) => {
           return (
             <li key={idea.id}>
-              <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={idea} handleDelete={handleDelete} />
+              <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={idea} handleDelete={handleDelete} autoFocus={false} />
             </li>
           );
         })}
       </ul>
       <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />
-      <button onClick={handleClear}>Clear</button>
+      <button type="button" onClick={handleClear}>Clear</button>
     </section>
   );
 };

@@ -1,6 +1,7 @@
-import _ from 'lodash';
 import { compareAsc } from "date-fns";
-import type { IdeaType, FilterNames } from '../../types/index';
+import type { IdeaType } from '../../types/index';
+
+type FilterNames = 'alphabetically' | 'creationDate';
 
 type SortApi = {
   [key in FilterNames]: {
@@ -15,14 +16,14 @@ export const sortApi: SortApi = {
     name: 'Alphabetically',
     key: 'alphabetically',
     sort: (ideas: IdeaType[]) => {
-      return _.orderBy(ideas, [(idea: IdeaType) => idea.content.title.toLowerCase()], 'asc');
+      return [...ideas].sort((a, b) => a.content.title.localeCompare(b.content.title));
     },
   },
   creationDate: {
     name: 'creation Date',
     key: 'creationDate',
     sort: (ideas: IdeaType[]) => {
-      return [...ideas].sort((a, b) => compareAsc(a.content.createdAt, b.content.createdAt));
+      return [...ideas].sort((a, b) => compareAsc(a.content.createdAt || new Date(0), b.content.createdAt || new Date(0)));
     },
   },
 };
