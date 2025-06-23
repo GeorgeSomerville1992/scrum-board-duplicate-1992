@@ -6,7 +6,6 @@ import { useStorage } from '../hooks/useStorage';
 export const Home = () => {
   // Default idea used as placeholder.
   const defaultIdea = {
-    id: 1,
     content: {
       title: '',
       description: '',
@@ -30,7 +29,6 @@ export const Home = () => {
   };
 
   const handleEdit = (id: number, ideaContent: IdeaText) => {
-
     const updatedIdeas = ideas.map((idea: IdeaType) => {
       // https://web.dev/blog/array-with#:~:text=In%20conclusion%2C%20immutable%20updates%20can,without%20mutating%20the%20original%20array.
       // use of .with?
@@ -67,13 +65,21 @@ export const Home = () => {
         {ideas.map((idea: IdeaType) => {
           return (
             <li key={idea.id}>
-              <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={idea} handleDelete={handleDelete} autoFocus={false} />
+              <Idea
+                handleCreate={handleCreate}
+                handleEdit={handleEdit}
+                idea={idea}
+                handleDelete={handleDelete}
+                autoFocus={false}
+              />
             </li>
           );
         })}
       </ul>
       <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />
-      <button type="button" onClick={handleClear}>Clear</button>
+      <button type="button" onClick={handleClear}>
+        Clear
+      </button>
     </section>
   );
 };

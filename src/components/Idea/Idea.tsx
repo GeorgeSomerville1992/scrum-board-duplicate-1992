@@ -20,16 +20,16 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   /* Keep the input place holder in focus when the idea is created or edited. */
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if(autoFocus && inputRef.current){
+    if (autoFocus && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [autoFocus, idea])
+  }, [autoFocus, idea]);
 
   const onSubmit = () => {
     const ideaObj = {
       title,
       description,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
     handleCreate(ideaObj);
 
@@ -47,7 +47,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   };
 
   const onDelete = () => {
-    if(handleDelete) {
+    if (handleDelete) {
       handleDelete(idea.id);
     }
   };
@@ -55,11 +55,11 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   return (
     <div className="">
       <input
-        aria-label={`idea${idea.id}title`}
+        aria-label="title"
         value={title}
         placeholder="Enter a title"
         data-testid="idea-item"
-        name={`idea${idea.id}title`}
+        name="title"
         onChange={(e) => setTitle(e.target.value)}
         ref={inputRef}
         required
@@ -69,14 +69,29 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         onChange={(e) => setDescription(e.target.value)}
         rows={2}
         cols={50}
-        aria-label={`idea${idea.id}description`}
+        name="description"
+        aria-label="description"
         maxLength={140}
         required
       />
       {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
-      {createdAt ? <button type="button" onClick={onEdit}>Edit</button> : <button type="button" onClick={onSubmit}>Add</button>}
-      {handleDelete ? <button type="button" onClick={onDelete}>delete</button> : ''}
+      {createdAt ? (
+        <button type="button" onClick={onEdit}>
+          Edit
+        </button>
+      ) : (
+        <button type="button" onClick={onSubmit}>
+          Add
+        </button>
+      )}
+      {handleDelete ? (
+        <button type="button" onClick={onDelete}>
+          delete
+        </button>
+      ) : (
+        ''
+      )}
     </div>
   );
 };

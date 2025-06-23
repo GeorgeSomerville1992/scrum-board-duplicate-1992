@@ -5,10 +5,10 @@ export type IdeaType = {
     description: string;
     createdAt: string | Date;
     modifiedAt?: string | Date;
-  }
+  };
 };
 
 export type IdeaText = {
   title: string;
   description: string;
-}
+};

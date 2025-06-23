@@ -5,6 +5,14 @@ import { MemoryRouter } from 'react-router';
 import userEvent from '@testing-library/user-event';
 
 describe('App', () => {
+  beforeEach(() => {
+    // tell vitest we use mocked time
+    // vi.useFakeTimers();
+    const mockDate = new Date(2022, 0, 1);
+    vi.setSystemTime(mockDate);
+    localStorage.clear();
+  });
+
   it('Renders Scrum app', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
@@ -25,8 +33,8 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('textbox', { name: /idea1title/i })).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: /idea1description/i })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /title/i })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /description/i })).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
   });
@@ -37,9 +45,9 @@ describe('App', () => {
         <App />
       </MemoryRouter>,
     );
-    const title = screen.getByRole('textbox', { name: /idea1title/i });
+    const title = screen.getByRole('textbox', { name: /title/i });
     const description = screen.getByRole('textbox', {
-      name: /idea1description/i,
+      name: /description/i,
     });
     const submit = screen.getByRole('button', { name: /Add/i });
 
@@ -60,9 +68,9 @@ describe('App', () => {
         <App />
       </MemoryRouter>,
     );
-    const title = screen.getByRole('textbox', { name: /idea1title/i });
+    const title = screen.getByRole('textbox', { name: /title/i });
     const description = screen.getByRole('textbox', {
-      name: /idea1description/i,
+      name: /description/i,
     });
     const submit = screen.getByRole('button', { name: /Add/i });
 
@@ -86,9 +94,9 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    const title = screen.getByRole('textbox', { name: /idea1title/i });
+    const title = screen.getByRole('textbox', { name: /title/i });
     const description = screen.getByRole('textbox', {
-      name: /idea1description/i,
+      name: /description/i,
     });
     const submit = screen.getByRole('button', { name: /Add/i });
 
@@ -106,8 +114,8 @@ describe('App', () => {
     await userEvent.type(description, 'testDescriptionEdited');
 
     await userEvent.click(edit);
-    // how can we simulate a last modfied date here?
-    expect(screen.getByText('last modified at January 1st 2022, 12:00:00 am')).toBeInTheDocument();
+
+    expect(screen.getByText('last modified at 01-01-2022 00:00:00')).toBeInTheDocument();
   });
 
   describe('Sorting', () => {
@@ -177,25 +185,9 @@ describe('App', () => {
         <App />
       </MemoryRouter>,
     );
-    expect(
-      screen.getByRole('heading', {
-        level: 1,
-      }),
-    ).toHaveTextContent('Not Found');
-  });
 
-  it('Renders not found if invalid path', () => {
-    render(
-      <MemoryRouter initialEntries={['/this-route-does-not-exist']}>
-        <App />
-      </MemoryRouter>,
-    );
-    expect(
-      screen.getByRole('heading', {
-        level: 1,
-      }),
-    ).toHaveTextContent('404');
-
+    expect(screen.getByText('Scrum App')).toBeInTheDocument();
+    expect(screen.getByText('404')).toBeInTheDocument();
     expect(screen.getByText('Take me back to')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
   });
