@@ -14,6 +14,13 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   const { createdAt, modifiedAt } = idea.content;
   const [title, setTitle] = useState<string>(idea.content.title);
   const [description, setDescription] = useState<string>(idea.content.description);
+  const [characterCountdown, setCharacterCountdown] = useState<number>(140 - description.length);
+  const isCloseToMaxLength = characterCountdown <= 20;
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
+    setCharacterCountdown(140 - e.target.value.length);
+  };
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -66,7 +73,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
       />
       <textarea
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        onChange={(e) => handleDescriptionChange(e)}
         rows={2}
         cols={50}
         name="description"
@@ -74,6 +81,9 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         maxLength={140}
         required
       />
+      {isCloseToMaxLength && <p className='text-red-500'>
+        {characterCountdown} characters remaining
+      </p>}
       {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? (
