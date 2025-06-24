@@ -78,10 +78,12 @@ export const Home = () => {
 
   return (
     <>
-      {notification && <Notification />}
-      <section className="">
+      <nav className='w-screen bg-light-grey flex pl-12 h-12'>
         <Sort handleIdeasSort={handleIdeasSort} ideas={ideas} />
-        <ul className="">
+      </nav>
+      {notification && <Notification />}
+      <section className='p-12'>
+        <ul>
           {ideas.map((idea: IdeaType) => {
             return (
               <li key={idea.id}>

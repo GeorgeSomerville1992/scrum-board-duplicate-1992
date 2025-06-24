@@ -4,10 +4,10 @@ import type { IdeaType, IdeaInput } from '../../types/index';
 
 type IdeaProps = {
   idea: IdeaType;
-  handleEdit: (id: number, ideaObj: IdeaInput) => void;
+  handleEdit: (id: number, ideaInput: IdeaInput) => void;
   handleDelete?: (id: number) => void;
   autoFocus: boolean;
-  handleCreate: (ideaObj: IdeaInput) => void;
+  handleCreate: (ideaInput: IdeaInput) => void;
 };
 
 export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }: IdeaProps) => {
@@ -60,13 +60,13 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   };
 
   return (
-    <div className="">
+    <div className="flex flex-col">
       <input
         aria-label="title"
         value={title}
-        placeholder="Enter a title"
-        data-testid="idea-item"
-        name="title"
+        placeholder='Add a title'
+        data-testid='idea-item'
+        name='title'
         onChange={(e) => setTitle(e.target.value)}
         ref={inputRef}
         required
@@ -76,6 +76,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         onChange={(e) => handleDescriptionChange(e)}
         rows={2}
         cols={50}
+        placeholder="Add a more detailed description"
         name="description"
         aria-label="description"
         maxLength={140}
