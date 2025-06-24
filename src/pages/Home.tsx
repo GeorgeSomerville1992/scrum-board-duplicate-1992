@@ -1,11 +1,14 @@
+import { useState, useEffect } from 'react';
 import { Idea } from '../components/Idea/Idea';
 import type { IdeaType, IdeaText } from '../types/index';
 import { Sort } from '../components/Sort/Sort';
 import { useStorage } from '../hooks/useStorage';
+import { Notification } from '../components/Notification/Notification';
 
 export const Home = () => {
   // Default idea used as placeholder.
   const defaultIdea = {
+    id: 0,
     content: {
       title: '',
       description: '',
@@ -15,6 +18,19 @@ export const Home = () => {
   };
 
   const [ideas, setIdeas] = useStorage('ideas', []);
+  const [notification, setNotification] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Show notification for 3 seconds
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
   const handleIdeasSort = (sortedIdeas: IdeaType[]) => {
     setIdeas(sortedIdeas);
   };
@@ -46,6 +62,8 @@ export const Home = () => {
     });
 
     setIdeas([...updatedIdeas]);
+
+    setNotification(true);
   };
 
   const handleDelete = (id: number) => {
@@ -59,7 +77,9 @@ export const Home = () => {
   };
 
   return (
-    <section className="">
+    <>
+      {notification && <Notification />}
+      <section className="">
       <Sort handleIdeasSort={handleIdeasSort} ideas={ideas} />
       <ul className="">
         {ideas.map((idea: IdeaType) => {
@@ -81,6 +101,7 @@ export const Home = () => {
         Clear
       </button>
     </section>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { App } from './App';
 import { MemoryRouter } from 'react-router';
@@ -6,12 +6,12 @@ import userEvent from '@testing-library/user-event';
 
 describe('App', () => {
   beforeEach(() => {
-    // tell vitest we use mocked time
-    // vi.useFakeTimers();
-    const mockDate = new Date(2022, 0, 1);
-    vi.setSystemTime(mockDate);
     localStorage.clear();
   });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  })
 
   it('Renders Scrum app', () => {
     render(
@@ -87,6 +87,11 @@ describe('App', () => {
   });
 
   it('Edits a Idea', async () => {
+    // vi.useRealTimers();
+    // vi.useFakeTimers();
+    const mockDate = new Date(2022, 0, 1);
+    vi.setSystemTime(mockDate);
+  
     // JEst mock the dates
     render(
       <MemoryRouter initialEntries={['/']}>
@@ -110,12 +115,23 @@ describe('App', () => {
     expect(screen.queryAllByRole('textbox')).toHaveLength(4);
 
     expect(edit).toBeInTheDocument();
+
     await userEvent.type(title, 'testTitleEdited');
+
     await userEvent.type(description, 'testDescriptionEdited');
 
     await userEvent.click(edit);
 
     expect(screen.getByText('last modified at 01-01-2022 00:00:00')).toBeInTheDocument();
+    expect(screen.queryAllByRole('textbox', { name: /title/i })[1]).toHaveValue('testTitleEdited');
+
+    // test the notification
+    expect(screen.getByText('Idea updated successfully!')).toBeInTheDocument();
+
+    // vi.advanceTimersByTime(2000);
+    // https://github.com/testing-library/user-event/issues/1115
+    // cannot use advanceTimersByTime with userEvent
+    // expect(screen.queryByText('Idea updated successfully!')).not.toBeInTheDocument();
   });
 
   describe('Sorting', () => {
@@ -156,8 +172,8 @@ describe('App', () => {
       fireEvent.change(dropdown, { target: { value: 'alphabetically' } });
 
       const ideas = screen.queryAllByTestId('idea-item');
-      expect(ideas[0].value).toBe('Apple');
-      expect(ideas[1].value).toBe('Pear');
+      expect((ideas[0] as HTMLInputElement).value).toBe('Apple');
+      expect((ideas[1] as HTMLInputElement).value).toBe('Pear');
     });
 
     it('it sorts a list from created date', () => {
@@ -174,8 +190,8 @@ describe('App', () => {
       fireEvent.change(dropdown, { target: { value: 'creationDate' } });
 
       const ideas = screen.queryAllByTestId('idea-item');
-      expect(ideas[0].value).toBe('Pear');
-      expect(ideas[1].value).toBe('Apple');
+      expect((ideas[0] as HTMLInputElement).value).toBe('Pear');
+      expect((ideas[1] as HTMLInputElement).value).toBe('Apple');
     });
   });
 
