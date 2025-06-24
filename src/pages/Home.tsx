@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Idea } from '../components/Idea/Idea';
-import type { IdeaType, IdeaText } from '../types/index';
+import type { IdeaType, IdeaInput } from '../types/index';
 import { Sort } from '../components/Sort/Sort';
 import { useStorage } from '../hooks/useStorage';
 import { Notification } from '../components/Notification/Notification';
@@ -35,7 +35,7 @@ export const Home = () => {
     setIdeas(sortedIdeas);
   };
 
-  const handleCreate = (idea: IdeaText) => {
+  const handleCreate = (idea: IdeaInput) => {
     const newIdea = {
       id: ideas.length + 1,
       content: idea,
@@ -44,7 +44,7 @@ export const Home = () => {
     setIdeas([...ideas, newIdea]);
   };
 
-  const handleEdit = (id: number, ideaContent: IdeaText) => {
+  const handleEdit = (id: number, IdeaInput: IdeaInput) => {
     const updatedIdeas = ideas.map((idea: IdeaType) => {
       // https://web.dev/blog/array-with#:~:text=In%20conclusion%2C%20immutable%20updates%20can,without%20mutating%20the%20original%20array.
       // use of .with?
@@ -53,7 +53,7 @@ export const Home = () => {
           ...idea,
           content: {
             ...idea.content,
-            ...ideaContent,
+            ...IdeaInput,
             modifiedAt: new Date(),
           },
         };
@@ -80,27 +80,27 @@ export const Home = () => {
     <>
       {notification && <Notification />}
       <section className="">
-      <Sort handleIdeasSort={handleIdeasSort} ideas={ideas} />
-      <ul className="">
-        {ideas.map((idea: IdeaType) => {
-          return (
-            <li key={idea.id}>
-              <Idea
-                handleCreate={handleCreate}
-                handleEdit={handleEdit}
-                idea={idea}
-                handleDelete={handleDelete}
-                autoFocus={false}
-              />
-            </li>
-          );
-        })}
-      </ul>
-      <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />
-      <button type="button" onClick={handleClear}>
-        Clear
-      </button>
-    </section>
+        <Sort handleIdeasSort={handleIdeasSort} ideas={ideas} />
+        <ul className="">
+          {ideas.map((idea: IdeaType) => {
+            return (
+              <li key={idea.id}>
+                <Idea
+                  handleCreate={handleCreate}
+                  handleEdit={handleEdit}
+                  idea={idea}
+                  handleDelete={handleDelete}
+                  autoFocus={false}
+                />
+              </li>
+            );
+          })}
+        </ul>
+        <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />
+        <button type="button" onClick={handleClear}>
+          Clear
+        </button>
+      </section>
     </>
   );
 };

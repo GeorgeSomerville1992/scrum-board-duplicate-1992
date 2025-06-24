@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { format } from 'date-fns';
-import type { IdeaType, IdeaText } from '../../types/index';
+import type { IdeaType, IdeaInput } from '../../types/index';
 
 type IdeaProps = {
   idea: IdeaType;
-  handleEdit: (id: number, ideaObj: IdeaText) => void;
+  handleEdit: (id: number, ideaObj: IdeaInput) => void;
   handleDelete?: (id: number) => void;
   autoFocus: boolean;
-  handleCreate: (ideaObj: IdeaText) => void;
+  handleCreate: (ideaObj: IdeaInput) => void;
 };
 
 export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }: IdeaProps) => {
@@ -33,24 +33,24 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   }, [autoFocus, idea]);
 
   const onSubmit = () => {
-    const ideaObj = {
+    const input = {
       title,
       description,
       createdAt: new Date(),
     };
-    handleCreate(ideaObj);
+    handleCreate(input);
 
     setTitle('');
     setDescription('');
   };
 
   const onEdit = () => {
-    const contentObj = {
+    const input = {
       title,
       description,
     };
 
-    handleEdit(idea.id, contentObj);
+    handleEdit(idea.id, input);
   };
 
   const onDelete = () => {
@@ -81,9 +81,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         maxLength={140}
         required
       />
-      {isCloseToMaxLength && <p className='text-red-500'>
-        {characterCountdown} characters remaining
-      </p>}
+      {isCloseToMaxLength && <p className="text-red-500">{characterCountdown} characters remaining</p>}
       {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? (

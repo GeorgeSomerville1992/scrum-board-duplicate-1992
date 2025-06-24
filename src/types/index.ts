@@ -8,7 +8,7 @@ export type IdeaType = {
   };
 };
 
-export type IdeaText = {
+export type IdeaInput = {
   title: string;
   description: string;
 };

@@ -11,129 +11,129 @@ describe('App', () => {
 
   afterEach(() => {
     vi.useRealTimers();
-  })
-
-  it('Renders Scrum app', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>,
-    );
-    expect(
-      screen.getByRole('heading', {
-        level: 1,
-      }),
-    ).toHaveTextContent('Scrum App');
   });
-
-  it('Renders a Idea on inital load', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByRole('textbox', { name: /title/i })).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: /description/i })).toBeInTheDocument();
-
-    expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
-  });
-
-  it('Adds a Idea', async () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>,
-    );
-    const title = screen.getByRole('textbox', { name: /title/i });
-    const description = screen.getByRole('textbox', {
-      name: /description/i,
+  describe('Form', () => {
+    it('Renders Scrum app', () => {
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <App />
+        </MemoryRouter>,
+      );
+      expect(
+        screen.getByRole('heading', {
+          level: 1,
+        }),
+      ).toHaveTextContent('Scrum App');
     });
-    const submit = screen.getByRole('button', { name: /Add/i });
 
-    await userEvent.type(title, 'testTitle');
-    await userEvent.type(description, 'testDescription');
+    it('Renders a Idea on inital load', () => {
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <App />
+        </MemoryRouter>,
+      );
 
-    expect(title).toHaveValue('testTitle');
-    expect(description).toHaveValue('testDescription');
+      expect(screen.getByRole('textbox', { name: /title/i })).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: /description/i })).toBeInTheDocument();
 
-    await userEvent.click(submit);
-    expect(screen.queryAllByRole('textbox')).toHaveLength(4);
-    // mroe specfic text box...
-  });
-
-  it('Deletes a Idea', async () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>,
-    );
-    const title = screen.getByRole('textbox', { name: /title/i });
-    const description = screen.getByRole('textbox', {
-      name: /description/i,
+      expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
     });
-    const submit = screen.getByRole('button', { name: /Add/i });
 
-    await userEvent.type(title, 'testTitle');
-    await userEvent.type(description, 'testDescription');
+    it('Adds a Idea', async () => {
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <App />
+        </MemoryRouter>,
+      );
+      const title = screen.getByRole('textbox', { name: /title/i });
+      const description = screen.getByRole('textbox', {
+        name: /description/i,
+      });
+      const submit = screen.getByRole('button', { name: /Add/i });
 
-    expect(title).toHaveValue('testTitle');
-    expect(description).toHaveValue('testDescription');
+      await userEvent.type(title, 'testTitle');
+      await userEvent.type(description, 'testDescription');
 
-    await userEvent.click(submit);
+      expect(title).toHaveValue('testTitle');
+      expect(description).toHaveValue('testDescription');
 
-    // TODO - assert this better
-    expect(screen.queryAllByRole('textbox')).toHaveLength(4);
-  });
-
-  it('Edits a Idea', async () => {
-    // vi.useRealTimers();
-    // vi.useFakeTimers();
-    const mockDate = new Date(2022, 0, 1);
-    vi.setSystemTime(mockDate);
-  
-    // JEst mock the dates
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>,
-    );
-
-    const title = screen.getByRole('textbox', { name: /title/i });
-    const description = screen.getByRole('textbox', {
-      name: /description/i,
+      await userEvent.click(submit);
+      expect(screen.queryAllByRole('textbox')).toHaveLength(4);
+      // mroe specfic text box...
     });
-    const submit = screen.getByRole('button', { name: /Add/i });
 
-    await userEvent.type(title, 'testTitle');
-    await userEvent.type(description, 'testDescription');
+    it('Deletes a Idea', async () => {
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <App />
+        </MemoryRouter>,
+      );
+      const title = screen.getByRole('textbox', { name: /title/i });
+      const description = screen.getByRole('textbox', {
+        name: /description/i,
+      });
+      const submit = screen.getByRole('button', { name: /Add/i });
 
-    await userEvent.click(submit);
-    const edit = screen.getByRole('button', { name: /Edit/i });
+      await userEvent.type(title, 'testTitle');
+      await userEvent.type(description, 'testDescription');
 
-    // TODO - assert this better
-    expect(screen.queryAllByRole('textbox')).toHaveLength(4);
+      expect(title).toHaveValue('testTitle');
+      expect(description).toHaveValue('testDescription');
 
-    expect(edit).toBeInTheDocument();
+      await userEvent.click(submit);
 
-    await userEvent.type(title, 'testTitleEdited');
+      // TODO - assert this better
+      expect(screen.queryAllByRole('textbox')).toHaveLength(4);
+    });
 
-    await userEvent.type(description, 'testDescriptionEdited');
+    it('Edits a Idea', async () => {
+      // vi.useRealTimers();
+      // vi.useFakeTimers();
+      const mockDate = new Date(2022, 0, 1);
+      vi.setSystemTime(mockDate);
 
-    await userEvent.click(edit);
+      // JEst mock the dates
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <App />
+        </MemoryRouter>,
+      );
 
-    expect(screen.getByText('last modified at 01-01-2022 00:00:00')).toBeInTheDocument();
-    expect(screen.queryAllByRole('textbox', { name: /title/i })[1]).toHaveValue('testTitleEdited');
+      const title = screen.getByRole('textbox', { name: /title/i });
+      const description = screen.getByRole('textbox', {
+        name: /description/i,
+      });
+      const submit = screen.getByRole('button', { name: /Add/i });
 
-    // test the notification
-    expect(screen.getByText('Idea updated successfully!')).toBeInTheDocument();
+      await userEvent.type(title, 'testTitle');
+      await userEvent.type(description, 'testDescription');
 
-    // vi.advanceTimersByTime(2000);
-    // https://github.com/testing-library/user-event/issues/1115
-    // cannot use advanceTimersByTime with userEvent
-    // expect(screen.queryByText('Idea updated successfully!')).not.toBeInTheDocument();
+      await userEvent.click(submit);
+      const edit = screen.getByRole('button', { name: /Edit/i });
+
+      // TODO - assert this better
+      expect(screen.queryAllByRole('textbox')).toHaveLength(4);
+
+      expect(edit).toBeInTheDocument();
+
+      await userEvent.type(title, 'testTitleEdited');
+
+      await userEvent.type(description, 'testDescriptionEdited');
+
+      await userEvent.click(edit);
+
+      expect(screen.getByText('last modified at 01-01-2022 00:00:00')).toBeInTheDocument();
+      expect(screen.queryAllByRole('textbox', { name: /title/i })[1]).toHaveValue('testTitleEdited');
+
+      // test the notification
+      expect(screen.getByText('Idea updated successfully!')).toBeInTheDocument();
+
+      // vi.advanceTimersByTime(2000);
+      // https://github.com/testing-library/user-event/issues/1115
+      // cannot use advanceTimersByTime with userEvent
+      // expect(screen.queryByText('Idea updated successfully!')).not.toBeInTheDocument();
+    });
   });
-
   describe('Sorting', () => {
     const mockIdeas = [
       {
