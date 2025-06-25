@@ -7,9 +7,9 @@ import { Footer } from './components/Layout/Footer';
 
 export const App = () => {
   return (
-    <div className='flex flex-col h-screen'>
+    <div className="flex flex-col h-screen">
       <Header />
-      <main className='mb-auto h-10 flex-grow'>
+      <main className="mb-auto h-10 flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFound />} />

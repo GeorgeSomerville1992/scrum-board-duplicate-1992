@@ -16,6 +16,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   const [description, setDescription] = useState<string>(idea.content.description);
   const [characterCountdown, setCharacterCountdown] = useState<number>(140 - description.length);
   const isCloseToMaxLength = characterCountdown <= 20;
+  const isDisabled = title.length === 0 || description.length === 0;
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
@@ -60,13 +61,14 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-dark-blue rounded-md color text-white p-8 gap-4">
       <input
         aria-label="title"
         value={title}
-        placeholder='Add a title'
-        data-testid='idea-item'
-        name='title'
+        placeholder="Add a title"
+        data-testid="idea-item"
+        className="pl-4 h-12 bg-light-grey rounded-md"
+        name="title"
         onChange={(e) => setTitle(e.target.value)}
         ref={inputRef}
         required
@@ -74,8 +76,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
       <textarea
         value={description}
         onChange={(e) => handleDescriptionChange(e)}
-        rows={2}
-        cols={50}
+        className="pl-4 h-18 align-middle rounded-md bg-light-grey"
         placeholder="Add a more detailed description"
         name="description"
         aria-label="description"
@@ -83,24 +84,39 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         required
       />
       {isCloseToMaxLength && <p className="text-red-500">{characterCountdown} characters remaining</p>}
+      <div className="flex">
+        {createdAt ? (
+          <button
+            type="button"
+            className="bg-button-secondary text-black pl-4 pr-4 pt-2 pb-2 rounded-lg"
+            onClick={onEdit}
+          >
+            Edit
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="bg-button-primary text-white pl-4 pr-4 pt-2 pb-2 rounded-lg"
+            onClick={onSubmit}
+            disabled={isDisabled}
+          >
+            Add an idea
+          </button>
+        )}
+        {handleDelete ? (
+          <button
+            type="button"
+            className="bg-button-secondary text-black pl-4 pr-4 pt-2 pb-2 rounded-lg ml-4"
+            onClick={onDelete}
+          >
+            Delete
+          </button>
+        ) : (
+          ''
+        )}
+      </div>
       {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
-      {createdAt ? (
-        <button type="button" onClick={onEdit}>
-          Edit
-        </button>
-      ) : (
-        <button type="button" onClick={onSubmit}>
-          Add
-        </button>
-      )}
-      {handleDelete ? (
-        <button type="button" onClick={onDelete}>
-          delete
-        </button>
-      ) : (
-        ''
-      )}
     </div>
   );
 };

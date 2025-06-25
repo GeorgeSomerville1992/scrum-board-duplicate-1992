@@ -78,15 +78,16 @@ export const Home = () => {
 
   return (
     <>
-      <nav className='w-screen bg-light-grey flex pl-12 h-12'>
+      <nav className="w-screen bg-light-grey flex pl-12 h-12">
         <Sort handleIdeasSort={handleIdeasSort} ideas={ideas} />
       </nav>
       {notification && <Notification />}
-      <section className='p-12'>
+      <section className="p-12 grid grid-cols-1 gap-4">
+        <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />
         <ul>
           {ideas.map((idea: IdeaType) => {
             return (
-              <li key={idea.id}>
+              <li key={idea.id} className='mb-4'>
                 <Idea
                   handleCreate={handleCreate}
                   handleEdit={handleEdit}
@@ -98,11 +99,14 @@ export const Home = () => {
             );
           })}
         </ul>
-        <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />
-        <button type="button" onClick={handleClear}>
-          Clear
-        </button>
       </section>
+      <button
+        className="bg-button-primary text-white pl-4 pr-4 pt-2 pb-2 rounded-lg"
+        type="button"
+        onClick={handleClear}
+      >
+        Clear
+      </button>
     </>
   );
 };
