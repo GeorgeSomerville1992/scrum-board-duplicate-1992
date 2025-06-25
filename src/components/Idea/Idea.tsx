@@ -9,7 +9,6 @@ type IdeaProps = {
   autoFocus: boolean;
   handleCreate: (ideaInput: IdeaInput) => void;
 };
-
 export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }: IdeaProps) => {
   const { createdAt, modifiedAt } = idea.content;
   const [title, setTitle] = useState<string>(idea.content.title);
@@ -43,6 +42,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
 
     setTitle('');
     setDescription('');
+    setCharacterCountdown(140);
   };
 
   const onEdit = () => {
@@ -76,7 +76,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
       <textarea
         value={description}
         onChange={(e) => handleDescriptionChange(e)}
-        className="pl-4 h-18 align-middle rounded-md bg-light-grey"
+        className="pl-4 pt-2 h-18 align-middle rounded-md bg-light-grey overflow-visible"
         placeholder="Add a more detailed description"
         name="description"
         aria-label="description"

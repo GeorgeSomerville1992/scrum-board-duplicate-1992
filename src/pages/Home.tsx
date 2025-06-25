@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Idea } from '../components/Idea/Idea';
 import type { IdeaType, IdeaInput } from '../types/index';
 import { Sort } from '../components/Sort/Sort';
@@ -76,18 +76,29 @@ export const Home = () => {
     setIdeas([]);
   };
 
+  // Memoize initial create idea component to keep original input ref highlighted when
+  // new ideas are created
+  const memoizedIdea = useMemo(
+    () => <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ideas.length],
+  );
+
   return (
     <>
       <nav className="w-screen bg-light-grey flex pl-12 h-12">
         <Sort handleIdeasSort={handleIdeasSort} ideas={ideas} />
+        <button type="button" onClick={handleClear} className="pl-12">
+          Clear
+        </button>
       </nav>
       {notification && <Notification />}
-      <section className="p-12 grid grid-cols-1 gap-4">
-        <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />
+      <section className="p-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>{memoizedIdea}</div>
         <ul>
           {ideas.map((idea: IdeaType) => {
             return (
-              <li key={idea.id} className='mb-4'>
+              <li key={idea.id} className="mb-4">
                 <Idea
                   handleCreate={handleCreate}
                   handleEdit={handleEdit}
@@ -100,13 +111,6 @@ export const Home = () => {
           })}
         </ul>
       </section>
-      <button
-        className="bg-button-primary text-white pl-4 pr-4 pt-2 pb-2 rounded-lg"
-        type="button"
-        onClick={handleClear}
-      >
-        Clear
-      </button>
     </>
   );
 };
