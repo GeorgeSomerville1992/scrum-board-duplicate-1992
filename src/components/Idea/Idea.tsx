@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { format } from 'date-fns';
 import type { IdeaType, IdeaInput } from '../../types/index';
 
@@ -14,8 +14,15 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   const [title, setTitle] = useState<string>(idea.content.title);
   const [description, setDescription] = useState<string>(idea.content.description);
   const [characterCountdown, setCharacterCountdown] = useState<number>(140 - description.length);
-  const isCloseToMaxLength = characterCountdown <= 20;
-  const isDisabled = title.length === 0 || description.length === 0;
+
+  // title and description change handlers will create many re-renders, so we use useMemo to avoid unnecessary calculations.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const isCloseToMaxLength = useMemo(() => characterCountdown <= 20, [characterCountdown <= 20]);
+  const isDisabled = useMemo(
+    () => title.length === 0 || description.length === 0,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [title.length < 1, description.length < 1],
+  );
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);

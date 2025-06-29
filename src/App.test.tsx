@@ -155,7 +155,7 @@ describe('App', () => {
       },
     ];
 
-    it('sorts a list alphatically', () => {
+    it('Sorts a list alphatically', () => {
       localStorage.setItem('ideas', JSON.stringify(mockIdeas));
       render(
         <MemoryRouter initialEntries={['/']}>
@@ -174,7 +174,7 @@ describe('App', () => {
       expect((ideas[2] as HTMLInputElement).value).toBe('Pear');
     });
 
-    it('it sorts a list from created date', () => {
+    it('Sorts a list from created date', () => {
       localStorage.setItem('ideas', JSON.stringify(mockIdeas));
       render(
         <MemoryRouter initialEntries={['/']}>

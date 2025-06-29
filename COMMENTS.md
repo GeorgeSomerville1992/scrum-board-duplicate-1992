@@ -14,5 +14,5 @@ https://scrum-board-duplicate-1992.vercel.app/
 
 - Input box always stays focused thanks to memoiszation of initial placeholder component. This will only render again when the length of ideas changes, always keeping the original placeholder focused when new idea is created.
 - Basic responsive layout using 2 columns for desktop and one for mobile
-- Uses storage (look into and fix) and can clear
+- Uses storage and can clear
 - If a new idea is added and a sort filter is active. That idea will be sorted.
