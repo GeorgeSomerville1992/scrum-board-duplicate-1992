@@ -6,10 +6,6 @@ Modern based vite app with react router and tailwind
 - Date-fns for easy formatting and sorting
 - Tailwind for basic styling and colour theme
 
-### Deployment link
-
-https://scrum-board-duplicate-1992.vercel.app/
-
 ### General comments/thoughts
 
 - Input box always stays focused thanks to memoiszation of initial placeholder component.

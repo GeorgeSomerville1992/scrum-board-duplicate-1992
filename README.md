@@ -1,6 +1,6 @@
 ### Ideas app
 
-### Setup and installation
+### Setup and Installation
 
 Please run
 `npm install` to install dependencies
@@ -10,3 +10,7 @@ Please run
 `npm run test` to run tests
 
 Please see COMMENTS.md file for additional comments on architecture etc
+
+### Deployment link
+
+https://scrum-board-duplicate-1992.vercel.app/
