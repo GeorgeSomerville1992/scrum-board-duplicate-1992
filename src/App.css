@@ -8,21 +8,8 @@
   --color-button-secondary: #ffffff;
 }
 
-#root {
-  margin: 0 auto;
-  text-align: center;
-}
-
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+.btn-primay:disabled {
+  @apply bg-gray-300;
+  @apply opacity-50;
+  @apply cursor-not-allowed;
 }

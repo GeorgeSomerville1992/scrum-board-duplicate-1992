@@ -86,12 +86,12 @@ export const Home = () => {
 
   return (
     <>
-      <nav className="w-screen bg-light-grey flex pl-12 h-12">
+      <div className="w-screen bg-light-grey flex pl-12 h-12">
         <Sort handleIdeasSort={handleIdeasSort} ideas={ideas} />
-        <button type="button" onClick={handleClear} className="pl-12">
+        <button type="button" onClick={handleClear} className="pl-6">
           Clear
         </button>
-      </nav>
+      </div>
       {notification && <Notification />}
       <section className="p-12 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>{memoizedIdea}</div>

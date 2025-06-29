@@ -20,13 +20,10 @@ export const sortApi: SortApi = {
     },
   },
   creationDate: {
-    name: 'creation Date',
+    name: 'Creation date',
     key: 'creationDate',
     sort: (ideas: IdeaType[]) => {
-      return [...ideas].sort((a, b) =>
-        // TODO, fix satisy types
-        compareAsc(a.content.createdAt || new Date(0), b.content.createdAt || new Date(0)),
-      );
+      return [...ideas].sort((a, b) => compareAsc(a.content.createdAt, b.content.createdAt));
     },
   },
 };

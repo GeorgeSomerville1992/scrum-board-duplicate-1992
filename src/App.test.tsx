@@ -87,12 +87,9 @@ describe('App', () => {
     });
 
     it('Edits a Idea', async () => {
-      // vi.useRealTimers();
-      // vi.useFakeTimers();
       const mockDate = new Date(2022, 0, 1);
       vi.setSystemTime(mockDate);
 
-      // JEst mock the dates
       render(
         <MemoryRouter initialEntries={['/']}>
           <App />

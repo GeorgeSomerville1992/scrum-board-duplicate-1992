@@ -1,5 +1,5 @@
 export const Footer = () => (
-  <footer className="h-10 mt-8 text-center text-gray-600">
+  <footer className="mt-8 mb-8 text-center text-gray-600">
     <p>© {new Date().getFullYear()} Scrum Board</p>
   </footer>
 );

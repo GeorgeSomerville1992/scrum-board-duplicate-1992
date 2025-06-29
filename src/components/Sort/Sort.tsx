@@ -16,15 +16,15 @@ type SortProps = {
 
 export const Sort = ({ handleIdeasSort, ideas }: SortProps) => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const sortedIdeas = sortApi[event.target.value as keyof typeof sortApi].sort(ideas);
-    handleIdeasSort(sortedIdeas);
+    if (sortApi[event.target.value as keyof typeof sortApi]) {
+      const sortedIdeas = sortApi[event.target.value as keyof typeof sortApi].sort(ideas);
+      handleIdeasSort(sortedIdeas);
+    }
   };
 
   return (
     <select onChange={handleChange} name="sort" id="sort" defaultValue="">
-      <option value="" disabled hidden>
-        Sort
-      </option>
+      <option>Sort Ideas by</option>
       {options.map((option) => {
         return (
           <option key={option.key} value={option.key}>

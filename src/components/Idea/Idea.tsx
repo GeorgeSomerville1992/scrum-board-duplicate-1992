@@ -61,7 +61,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   };
 
   return (
-    <div className="flex flex-col bg-dark-blue rounded-md color text-white p-8 gap-4">
+    <div className="flex flex-col bg-dark-blue rounded-md color text-white p-8 gap-4 h-80">
       <input
         aria-label="title"
         value={title}
@@ -84,6 +84,8 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         required
       />
       {isCloseToMaxLength && <p className="text-red-500">{characterCountdown} characters remaining</p>}
+      {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
+      {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       <div className="flex">
         {createdAt ? (
           <button
@@ -96,7 +98,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         ) : (
           <button
             type="button"
-            className="bg-button-primary text-white pl-4 pr-4 pt-2 pb-2 rounded-lg"
+            className="btn-primay bg-button-primary text-white pl-4 pr-4 pt-2 pb-2 rounded-lg"
             onClick={onSubmit}
             disabled={isDisabled}
           >
@@ -115,8 +117,6 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
           ''
         )}
       </div>
-      {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
-      {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
     </div>
   );
 };
