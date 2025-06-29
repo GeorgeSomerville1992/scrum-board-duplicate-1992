@@ -59,6 +59,7 @@ describe('App', () => {
 
       await userEvent.click(submit);
       expect(screen.queryAllByRole('textbox')).toHaveLength(4);
+      expect(screen.getByText('Idea created successfully!')).toBeInTheDocument();
     });
 
     it('Deletes a Idea', async () => {
@@ -87,7 +88,7 @@ describe('App', () => {
       await userEvent.click(deleteBtn);
 
       // test the notification
-      expect(screen.getByText('Idea Deleted successfully!')).toBeInTheDocument();
+      expect(screen.getByText('Idea deleted successfully!')).toBeInTheDocument();
       expect(screen.queryAllByRole('textbox')).toHaveLength(2);
     });
 
@@ -130,7 +131,7 @@ describe('App', () => {
       expect(screen.queryAllByRole('textbox', { name: /title/i })[1]).toHaveValue('testTitleEdited');
 
       // test the notification
-      expect(screen.getByText('Idea Updated successfully!')).toBeInTheDocument();
+      expect(screen.getByText('Idea updated successfully!')).toBeInTheDocument();
     });
   });
   describe('Sorting', () => {

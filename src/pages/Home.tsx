@@ -21,7 +21,7 @@ export const Home = () => {
   const [ideas, setIdeas] = useStorage('ideas', []);
   const [notification, setNotification] = useState<string>('');
 
-  const sortRef = useRef<keyof typeof sortApi>('default');
+  const sortRef = useRef<keyof typeof sortApi>('');
 
   useEffect(() => {
     // Show notification for 3 seconds
@@ -41,7 +41,7 @@ export const Home = () => {
     };
 
     setIdeas([...ideas, newIdea]);
-    setNotification('Created');
+    setNotification('created');
   };
 
   useEffect(() => {
@@ -68,12 +68,12 @@ export const Home = () => {
     });
 
     setIdeas([...updatedIdeas]);
-    setNotification('Updated');
+    setNotification('updated');
   };
 
   const handleSort = (sort: keyof typeof sortApi) => {
     // Do not sort if default is selected
-    if (sort !== 'default') {
+    if (sort) {
       const sortedIdeas = sortApi[sort].sort(ideas);
       setIdeas(sortedIdeas);
     }
@@ -84,7 +84,7 @@ export const Home = () => {
     const filteredIdeas = ideas.filter((idea: IdeaType) => idea.id !== id);
 
     setIdeas(filteredIdeas);
-    setNotification('Deleted');
+    setNotification('deleted');
   };
 
   const handleClear = () => {
