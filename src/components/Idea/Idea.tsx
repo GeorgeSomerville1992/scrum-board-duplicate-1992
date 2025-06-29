@@ -83,10 +83,12 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         maxLength={140}
         required
       />
-      {isCloseToMaxLength && <p className="text-red-500">{characterCountdown} characters remaining</p>}
+      {description && (
+        <p className={`${isCloseToMaxLength ? 'text-red-500' : ''}`}>{characterCountdown} characters remaining</p>
+      )}
       {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
-      <div className="flex">
+      <div className="flex items-end flex-grow-1">
         {createdAt ? (
           <button
             type="button"

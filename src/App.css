@@ -9,7 +9,6 @@
 }
 
 .btn-primay:disabled {
-  @apply bg-gray-300;
-  @apply opacity-50;
+  @apply bg-gray-500;
   @apply cursor-not-allowed;
 }

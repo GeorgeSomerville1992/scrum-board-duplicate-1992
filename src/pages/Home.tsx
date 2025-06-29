@@ -18,13 +18,13 @@ export const Home = () => {
   };
 
   const [ideas, setIdeas] = useStorage('ideas', []);
-  const [notification, setNotification] = useState<boolean>(false);
+  const [notification, setNotification] = useState<string>('');
 
   useEffect(() => {
     // Show notification for 3 seconds
     if (notification) {
       const timer = setTimeout(() => {
-        setNotification(false);
+        setNotification('');
       }, 3000);
 
       return () => clearTimeout(timer);
@@ -42,6 +42,7 @@ export const Home = () => {
     };
 
     setIdeas([...ideas, newIdea]);
+    setNotification('Created');
   };
 
   const handleEdit = (id: number, IdeaInput: IdeaInput) => {
@@ -63,13 +64,14 @@ export const Home = () => {
 
     setIdeas([...updatedIdeas]);
 
-    setNotification(true);
+    setNotification('Updated');
   };
 
   const handleDelete = (id: number) => {
     const filteredIdeas = ideas.filter((idea: IdeaType) => idea.id !== id);
 
     setIdeas(filteredIdeas);
+    setNotification('Deleted');
   };
 
   const handleClear = () => {
@@ -86,13 +88,13 @@ export const Home = () => {
 
   return (
     <>
-      <div className="w-screen bg-light-grey flex pl-12 h-12">
+      <div className="w-screen bg-light-grey flex pl-12 h-12 top-15">
         <Sort handleIdeasSort={handleIdeasSort} ideas={ideas} />
         <button type="button" onClick={handleClear} className="pl-6">
           Clear
         </button>
       </div>
-      {notification && <Notification />}
+      {notification && <Notification notification={notification} />}
       <section className="p-12 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>{memoizedIdea}</div>
         <ul>
