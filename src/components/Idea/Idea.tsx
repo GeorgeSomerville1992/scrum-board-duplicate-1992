@@ -107,7 +107,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
             Add an idea
           </button>
         )}
-        {handleDelete ? (
+        {handleDelete && (
           <button
             type="button"
             className="bg-button-secondary text-black pl-4 pr-4 pt-2 pb-2 rounded-lg ml-4"
@@ -115,8 +115,6 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
           >
             Delete
           </button>
-        ) : (
-          ''
         )}
       </div>
     </div>

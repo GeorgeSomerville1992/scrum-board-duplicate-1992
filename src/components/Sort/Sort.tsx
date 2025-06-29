@@ -10,16 +10,13 @@ const options = Object.values(sortApi).map((sort) => {
 });
 
 type SortProps = {
-  handleIdeasSort: (sortedIdeas: IdeaType[]) => void;
+  handleSort: (sort: keyof typeof sortApi) => void;
   ideas: IdeaType[];
 };
 
-export const Sort = ({ handleIdeasSort, ideas }: SortProps) => {
+export const Sort = ({ handleSort }: SortProps) => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    if (sortApi[event.target.value as keyof typeof sortApi]) {
-      const sortedIdeas = sortApi[event.target.value as keyof typeof sortApi].sort(ideas);
-      handleIdeasSort(sortedIdeas);
-    }
+    handleSort(event.target.value as keyof typeof sortApi);
   };
 
   return (

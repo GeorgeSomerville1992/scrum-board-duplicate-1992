@@ -1,7 +1,7 @@
 import { compareAsc } from 'date-fns';
 import type { IdeaType } from '../../types/index';
 
-type FilterNames = 'alphabetically' | 'creationDate';
+type FilterNames = 'alphabetically' | 'creationDate' | 'default';
 
 type SortApi = {
   [key in FilterNames]: {
@@ -24,6 +24,13 @@ export const sortApi: SortApi = {
     key: 'creationDate',
     sort: (ideas: IdeaType[]) => {
       return [...ideas].sort((a, b) => compareAsc(a.content.createdAt, b.content.createdAt));
+    },
+  },
+  default: {
+    name: 'Default',
+    key: 'default',
+    sort: (ideas: IdeaType[]) => {
+      return [...ideas];
     },
   },
 };

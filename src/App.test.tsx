@@ -23,7 +23,7 @@ describe('App', () => {
         screen.getByRole('heading', {
           level: 1,
         }),
-      ).toHaveTextContent('Scrum App');
+      ).toHaveTextContent('Ideas App');
     });
 
     it('Renders a Idea on inital load', () => {
@@ -59,7 +59,6 @@ describe('App', () => {
 
       await userEvent.click(submit);
       expect(screen.queryAllByRole('textbox')).toHaveLength(4);
-      // mroe specfic text box...
     });
 
     it('Deletes a Idea', async () => {
@@ -68,6 +67,8 @@ describe('App', () => {
           <App />
         </MemoryRouter>,
       );
+
+      expect(screen.queryAllByRole('textbox')).toHaveLength(2);
       const title = screen.getByRole('textbox', { name: /title/i });
       const description = screen.getByRole('textbox', {
         name: /description/i,
@@ -76,14 +77,18 @@ describe('App', () => {
 
       await userEvent.type(title, 'testTitle');
       await userEvent.type(description, 'testDescription');
-
-      expect(title).toHaveValue('testTitle');
-      expect(description).toHaveValue('testDescription');
-
       await userEvent.click(submit);
-
-      // TODO - assert this better
+      // expect the idea was created
       expect(screen.queryAllByRole('textbox')).toHaveLength(4);
+
+      const deleteBtn = screen.getByRole('button', { name: /Delete/i });
+
+      expect(deleteBtn).toBeInTheDocument();
+      await userEvent.click(deleteBtn);
+
+      // test the notification
+      expect(screen.getByText('Idea Deleted successfully!')).toBeInTheDocument();
+      expect(screen.queryAllByRole('textbox')).toHaveLength(2);
     });
 
     it('Edits a Idea', async () => {
@@ -100,22 +105,24 @@ describe('App', () => {
       const description = screen.getByRole('textbox', {
         name: /description/i,
       });
-      const submit = screen.getByRole('button', { name: /Add/i });
+      const submit = screen.getByRole('button', { name: /Add an idea/i });
 
       await userEvent.type(title, 'testTitle');
       await userEvent.type(description, 'testDescription');
-
       await userEvent.click(submit);
-      const edit = screen.getByRole('button', { name: /Edit/i });
 
-      // TODO - assert this better
-      expect(screen.queryAllByRole('textbox')).toHaveLength(4);
+      const edit = screen.getByRole('button', { name: /Edit/i });
 
       expect(edit).toBeInTheDocument();
 
-      await userEvent.type(title, 'testTitleEdited');
+      const titleEdit = screen.getAllByRole('textbox', { name: /title/i })[1];
+      const descriptionEdit = screen.queryAllByRole('textbox', {
+        name: /description/i,
+      })[1];
 
-      await userEvent.type(description, 'testDescriptionEdited');
+      await userEvent.type(titleEdit, 'Edited');
+
+      await userEvent.type(descriptionEdit, 'Edited');
 
       await userEvent.click(edit);
 
@@ -123,12 +130,7 @@ describe('App', () => {
       expect(screen.queryAllByRole('textbox', { name: /title/i })[1]).toHaveValue('testTitleEdited');
 
       // test the notification
-      expect(screen.getByText('Idea updated successfully!')).toBeInTheDocument();
-
-      // vi.advanceTimersByTime(2000);
-      // https://github.com/testing-library/user-event/issues/1115
-      // cannot use advanceTimersByTime with userEvent
-      // expect(screen.queryByText('Idea updated successfully!')).not.toBeInTheDocument();
+      expect(screen.getByText('Idea Updated successfully!')).toBeInTheDocument();
     });
   });
   describe('Sorting', () => {
@@ -153,8 +155,6 @@ describe('App', () => {
       },
     ];
 
-    // find a way to create list dynamically vi import rather than manually
-    // perhaps do it mocking storage..
     it('sorts a list alphatically', () => {
       localStorage.setItem('ideas', JSON.stringify(mockIdeas));
       render(
@@ -169,8 +169,9 @@ describe('App', () => {
       fireEvent.change(dropdown, { target: { value: 'alphabetically' } });
 
       const ideas = screen.queryAllByTestId('idea-item');
-      expect((ideas[0] as HTMLInputElement).value).toBe('Apple');
-      expect((ideas[1] as HTMLInputElement).value).toBe('Pear');
+
+      expect((ideas[1] as HTMLInputElement).value).toBe('Apple');
+      expect((ideas[2] as HTMLInputElement).value).toBe('Pear');
     });
 
     it('it sorts a list from created date', () => {
@@ -187,8 +188,8 @@ describe('App', () => {
       fireEvent.change(dropdown, { target: { value: 'creationDate' } });
 
       const ideas = screen.queryAllByTestId('idea-item');
-      expect((ideas[0] as HTMLInputElement).value).toBe('Pear');
-      expect((ideas[1] as HTMLInputElement).value).toBe('Apple');
+      expect((ideas[1] as HTMLInputElement).value).toBe('Pear');
+      expect((ideas[2] as HTMLInputElement).value).toBe('Apple');
     });
   });
 
@@ -199,7 +200,7 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('Scrum App')).toBeInTheDocument();
+    expect(screen.getByText('Ideas App')).toBeInTheDocument();
     expect(screen.getByText('404')).toBeInTheDocument();
     expect(screen.getByText('Take me back to')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();

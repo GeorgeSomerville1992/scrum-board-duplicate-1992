@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Idea } from '../components/Idea/Idea';
 import type { IdeaType, IdeaInput } from '../types/index';
 import { Sort } from '../components/Sort/Sort';
 import { useStorage } from '../hooks/useStorage';
 import { Notification } from '../components/Notification/Notification';
+import { sortApi } from '../components/Sort/sortApi';
 
 export const Home = () => {
   // Default idea used as placeholder.
@@ -20,6 +21,8 @@ export const Home = () => {
   const [ideas, setIdeas] = useStorage('ideas', []);
   const [notification, setNotification] = useState<string>('');
 
+  const sortRef = useRef<keyof typeof sortApi>('default');
+
   useEffect(() => {
     // Show notification for 3 seconds
     if (notification) {
@@ -31,10 +34,6 @@ export const Home = () => {
     }
   }, [notification]);
 
-  const handleIdeasSort = (sortedIdeas: IdeaType[]) => {
-    setIdeas(sortedIdeas);
-  };
-
   const handleCreate = (idea: IdeaInput) => {
     const newIdea = {
       id: ideas.length + 1,
@@ -45,10 +44,15 @@ export const Home = () => {
     setNotification('Created');
   };
 
+  useEffect(() => {
+    if (sortRef.current) {
+      handleSort(sortRef.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ideas.length]);
+
   const handleEdit = (id: number, IdeaInput: IdeaInput) => {
     const updatedIdeas = ideas.map((idea: IdeaType) => {
-      // https://web.dev/blog/array-with#:~:text=In%20conclusion%2C%20immutable%20updates%20can,without%20mutating%20the%20original%20array.
-      // use of .with?
       if (idea.id === id) {
         return {
           ...idea,
@@ -59,12 +63,21 @@ export const Home = () => {
           },
         };
       }
+      // todo look at this?
       return idea;
     });
 
     setIdeas([...updatedIdeas]);
-
     setNotification('Updated');
+  };
+
+  const handleSort = (sort: keyof typeof sortApi) => {
+    // Do not sort if default is selected
+    if (sort !== 'default') {
+      const sortedIdeas = sortApi[sort].sort(ideas);
+      setIdeas(sortedIdeas);
+    }
+    sortRef.current = sort;
   };
 
   const handleDelete = (id: number) => {
@@ -89,7 +102,7 @@ export const Home = () => {
   return (
     <>
       <div className="w-screen bg-light-grey flex pl-12 h-12 top-15">
-        <Sort handleIdeasSort={handleIdeasSort} ideas={ideas} />
+        <Sort handleSort={handleSort} ideas={ideas} />
         <button type="button" onClick={handleClear} className="pl-6">
           Clear
         </button>
