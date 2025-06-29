@@ -3,8 +3,8 @@
 Modern based vite app with react router and tailwind
 
 - vi.test for unit tests
-- Date-fns for easy formatting and comparing of dates
-- sorting and filtering using
+- Date-fns for easy formatting and sorting
+- Tailwind for basic styling and colour theme
 
 ### Deployment link
 
