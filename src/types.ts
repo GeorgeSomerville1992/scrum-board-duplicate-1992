@@ -7,8 +7,3 @@ export type IdeaType = {
     modifiedAt?: string | Date;
   };
 };
-
-export type IdeaInput = {
-  title: string;
-  description: string;
-};

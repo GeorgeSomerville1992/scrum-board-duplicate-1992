@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { format } from 'date-fns';
-import type { IdeaType, IdeaInput } from '../../types/index';
+import type { IdeaType } from '../../types';
 
 type IdeaProps = {
   idea: IdeaType;
-  handleEdit: (id: number, ideaInput: IdeaInput) => void;
+  handleEdit: (id: number, ideaInput: Pick<IdeaType['content'], 'title' | 'description'>) => void;
   handleDelete?: (id: number) => void;
   autoFocus: boolean;
-  handleCreate: (ideaInput: IdeaInput) => void;
+  handleCreate: (ideaInput: Pick<IdeaType['content'], 'title' | 'description'>) => void;
 };
 export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }: IdeaProps) => {
   const { createdAt, modifiedAt } = idea.content;
@@ -68,13 +68,13 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   };
 
   return (
-    <div className="flex flex-col bg-dark-blue rounded-md color text-white p-8 gap-4 h-80">
+    <div className="flex flex-col bg-black rounded-md color text-white p-8 gap-4 h-100">
       <input
         aria-label="title"
         value={title}
         placeholder="Add a title"
         data-testid="idea-item"
-        className="pl-4 h-12 bg-light-grey rounded-md"
+        className="pl-4 h-12 bg-light-grey text-black placeholder-black rounded-md"
         name="title"
         onChange={(e) => setTitle(e.target.value)}
         ref={inputRef}
@@ -83,7 +83,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
       <textarea
         value={description}
         onChange={(e) => handleDescriptionChange(e)}
-        className="pl-4 pt-2 h-18 align-middle rounded-md bg-light-grey overflow-visible"
+        className="pl-4 pt-2 h-18 align-middle rounded-md bg-light-grey placeholder-black text-black overflow-visible"
         placeholder="Add a more detailed description"
         name="description"
         aria-label="description"

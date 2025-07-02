@@ -1,11 +1,11 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-dark-grey: #626f86;
+  --color-black: #000000;
   --color-light-grey: #d3d3d3;
-  --color-dark-blue: #172b4d;
   --color-button-primary: #0c66e4;
   --color-button-secondary: #ffffff;
+  --color-white: #ffffff;
 }
 
 .btn-primay:disabled {

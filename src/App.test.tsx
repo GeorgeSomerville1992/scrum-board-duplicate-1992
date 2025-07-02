@@ -13,25 +13,18 @@ describe('App', () => {
     vi.useRealTimers();
   });
   describe('Form', () => {
-    it('Renders Scrum app', () => {
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <App />
-        </MemoryRouter>,
-      );
-      expect(
-        screen.getByRole('heading', {
-          level: 1,
-        }),
-      ).toHaveTextContent('Ideas App');
-    });
-
     it('Renders a Idea on inital load', () => {
       render(
         <MemoryRouter initialEntries={['/']}>
           <App />
         </MemoryRouter>,
       );
+
+      expect(
+        screen.getByRole('heading', {
+          level: 1,
+        }),
+      ).toHaveTextContent('Ideas App');
 
       expect(screen.getByRole('textbox', { name: /title/i })).toBeInTheDocument();
       expect(screen.getByRole('textbox', { name: /description/i })).toBeInTheDocument();

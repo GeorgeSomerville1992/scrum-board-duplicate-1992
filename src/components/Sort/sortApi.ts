@@ -1,5 +1,5 @@
 import { compareAsc } from 'date-fns';
-import type { IdeaType } from '../../types/index';
+import type { IdeaType } from '../../types';
 
 type FilterNames = 'alphabetically' | 'creationDate' | '';
 

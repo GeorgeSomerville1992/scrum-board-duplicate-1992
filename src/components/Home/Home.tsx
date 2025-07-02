@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Idea } from '../components/Idea/Idea';
-import type { IdeaType, IdeaInput } from '../types/index';
-import { Sort } from '../components/Sort/Sort';
-import { useStorage } from '../hooks/useStorage';
-import { Notification } from '../components/Notification/Notification';
-import { sortApi } from '../components/Sort/sortApi';
+import { Idea } from '../Idea/Idea';
+import type { IdeaType } from '../../types';
+import { Sort } from '../Sort/Sort';
+import { useStorage } from '../../hooks/useStorage';
+import { Notification } from '../Notification/Notification';
+import { sortApi } from '../Sort/sortApi';
 
 export const Home = () => {
   // Default idea used as placeholder.
@@ -34,7 +34,7 @@ export const Home = () => {
     }
   }, [notification]);
 
-  const handleCreate = (idea: IdeaInput) => {
+  const handleCreate = (idea: Pick<IdeaType['content'], 'title' | 'description'>) => {
     const newIdea = {
       id: ideas.length + 1,
       content: idea,
@@ -51,7 +51,7 @@ export const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ideas.length]);
 
-  const handleEdit = (id: number, IdeaInput: IdeaInput) => {
+  const handleEdit = (id: number, IdeaInput: Pick<IdeaType['content'], 'title' | 'description'>) => {
     const updatedIdeas = ideas.map((idea: IdeaType) => {
       if (idea.id === id) {
         return {

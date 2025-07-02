@@ -1,5 +1,5 @@
 import { sortApi } from './sortApi';
-import type { IdeaType } from '../../types/index';
+import type { IdeaType } from '../../types';
 
 type SortProps = {
   handleSort: (sort: keyof typeof sortApi) => void;
