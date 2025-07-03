@@ -1,24 +1,20 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { App } from './App';
-import { MemoryRouter } from 'react-router';
-import userEvent from '@testing-library/user-event';
 
 describe('App', () => {
   beforeEach(() => {
     localStorage.clear();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
     vi.useRealTimers();
   });
+
   describe('Form', () => {
     it('Renders a Idea on inital load', () => {
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <App />
-        </MemoryRouter>,
-      );
+      render(<App />);
 
       expect(
         screen.getByRole('heading', {
@@ -33,34 +29,26 @@ describe('App', () => {
     });
 
     it('Adds a Idea', async () => {
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <App />
-        </MemoryRouter>,
-      );
+      render(<App />);
       const title = screen.getByRole('textbox', { name: /title/i });
       const description = screen.getByRole('textbox', {
         name: /description/i,
       });
       const submit = screen.getByRole('button', { name: /Add/i });
 
-      await userEvent.type(title, 'testTitle');
-      await userEvent.type(description, 'testDescription');
+      await fireEvent.change(title, { target: { value: 'testTitle' } });
+      await fireEvent.change(description, { target: { value: 'testDescription' } });
 
       expect(title).toHaveValue('testTitle');
       expect(description).toHaveValue('testDescription');
+      await fireEvent.click(submit);
 
-      await userEvent.click(submit);
       expect(screen.queryAllByRole('textbox')).toHaveLength(4);
       expect(screen.getByText('Idea created successfully!')).toBeInTheDocument();
     });
 
     it('Deletes a Idea', async () => {
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <App />
-        </MemoryRouter>,
-      );
+      render(<App />);
 
       expect(screen.queryAllByRole('textbox')).toHaveLength(2);
       const title = screen.getByRole('textbox', { name: /title/i });
@@ -69,31 +57,35 @@ describe('App', () => {
       });
       const submit = screen.getByRole('button', { name: /Add/i });
 
-      await userEvent.type(title, 'testTitle');
-      await userEvent.type(description, 'testDescription');
-      await userEvent.click(submit);
+      await fireEvent.change(title, { target: { value: 'testTitle' } });
+      await fireEvent.change(description, { target: { value: 'testDescription' } });
+
+      await fireEvent.click(submit);
       // expect the idea was created
       expect(screen.queryAllByRole('textbox')).toHaveLength(4);
 
       const deleteBtn = screen.getByRole('button', { name: /Delete/i });
 
       expect(deleteBtn).toBeInTheDocument();
-      await userEvent.click(deleteBtn);
+      await fireEvent.click(deleteBtn);
 
       // test the notification
       expect(screen.getByText('Idea deleted successfully!')).toBeInTheDocument();
       expect(screen.queryAllByRole('textbox')).toHaveLength(2);
+
+      act(() => {
+        vi.advanceTimersByTime(3000);
+      });
+
+      // Verify notification is cleared
+      expect(screen.queryByText('created')).not.toBeInTheDocument();
     });
 
     it('Edits a Idea', async () => {
       const mockDate = new Date(2022, 0, 1);
       vi.setSystemTime(mockDate);
 
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <App />
-        </MemoryRouter>,
-      );
+      render(<App />);
 
       const title = screen.getByRole('textbox', { name: /title/i });
       const description = screen.getByRole('textbox', {
@@ -101,11 +93,15 @@ describe('App', () => {
       });
       const submit = screen.getByRole('button', { name: /Add an idea/i });
 
-      await userEvent.type(title, 'testTitle');
-      await userEvent.type(description, 'testDescription');
-      await userEvent.click(submit);
+      await fireEvent.change(title, { target: { value: 'testTitle1' } });
+      await fireEvent.change(description, { target: { value: 'testDescription1' } });
+      await fireEvent.click(submit);
 
-      const edit = screen.getByRole('button', { name: /Edit/i });
+      await fireEvent.change(title, { target: { value: 'testTitle2' } });
+      await fireEvent.change(description, { target: { value: 'testDescription2' } });
+      await fireEvent.click(submit);
+
+      const edit = screen.getAllByRole('button', { name: /Edit/i })[1];
 
       expect(edit).toBeInTheDocument();
 
@@ -114,14 +110,16 @@ describe('App', () => {
         name: /description/i,
       })[1];
 
-      await userEvent.type(titleEdit, 'Edited');
+      await fireEvent.change(titleEdit, { target: { value: 'testTitle1Edited' } });
+      await fireEvent.change(descriptionEdit, { target: { value: 'Edited' } });
 
-      await userEvent.type(descriptionEdit, 'Edited');
-
-      await userEvent.click(edit);
+      await fireEvent.click(edit);
 
       expect(screen.getByText('last modified at 01-01-2022 00:00:00')).toBeInTheDocument();
-      expect(screen.queryAllByRole('textbox', { name: /title/i })[1]).toHaveValue('testTitleEdited');
+      expect(screen.queryAllByRole('textbox', { name: /title/i })[1]).toHaveValue('testTitle1Edited');
+
+      // check other idea is not modified
+      expect(screen.queryAllByRole('textbox', { name: /title/i })[2]).toHaveValue('testTitle2');
 
       // test the notification
       expect(screen.getByText('Idea updated successfully!')).toBeInTheDocument();
@@ -149,13 +147,23 @@ describe('App', () => {
       },
     ];
 
+    it('Clears storage', async () => {
+      localStorage.setItem('ideas', JSON.stringify(mockIdeas));
+      render(<App />);
+
+      const ideas = screen.queryAllByTestId('idea-item');
+      expect(ideas).toHaveLength(3);
+
+      // First, sort the patients
+      const clear = screen.getByRole('button', { name: /Clear/i });
+      await fireEvent.click(clear);
+      const clearedIdeas = screen.queryAllByTestId('idea-item');
+      expect(clearedIdeas).toHaveLength(1);
+    });
+
     it('Sorts a list alphatically', () => {
       localStorage.setItem('ideas', JSON.stringify(mockIdeas));
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <App />
-        </MemoryRouter>,
-      );
+      render(<App />);
 
       // First, sort the patients
       const dropdown = screen.getByRole('combobox');
@@ -170,11 +178,7 @@ describe('App', () => {
 
     it('Sorts a list from created date', () => {
       localStorage.setItem('ideas', JSON.stringify(mockIdeas));
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <App />
-        </MemoryRouter>,
-      );
+      render(<App />);
 
       // First, sort the patients
       const dropdown = screen.getByRole('combobox');
@@ -185,18 +189,5 @@ describe('App', () => {
       expect((ideas[1] as HTMLInputElement).value).toBe('Pear');
       expect((ideas[2] as HTMLInputElement).value).toBe('Apple');
     });
-  });
-
-  it('Renders not found if invalid path', () => {
-    render(
-      <MemoryRouter initialEntries={['/this-route-does-not-exist']}>
-        <App />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByText('Ideas App')).toBeInTheDocument();
-    expect(screen.getByText('404')).toBeInTheDocument();
-    expect(screen.getByText('Take me back to')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
   });
 });
