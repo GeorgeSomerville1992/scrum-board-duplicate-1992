@@ -56,6 +56,7 @@ export const Home = () => {
       if (idea.id === id) {
         return {
           ...idea,
+          // refactor to make less complicated - we dont need a content object here
           content: {
             ...idea.content,
             ...IdeaInput,
