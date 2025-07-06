@@ -6,4 +6,21 @@
   --color-button-primary: #0c66e4;
   --color-button-secondary: #ffffff;
   --color-white: #ffffff;
+
+  --animate-pulse: pulse 3s 1;
+  @keyframes pulse {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+    }
+
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    }
+  }
 }

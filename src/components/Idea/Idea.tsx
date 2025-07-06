@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { format } from 'date-fns';
 import type { IdeaType } from '../../types';
-import { SubmitBtn } from '../Layout/SubmitBtn';
+import { SubmitButton } from '../Layout/SubmitButton';
 import { ErrorText } from '../Layout/ErrorText';
 
 type IdeaProps = {
@@ -149,7 +149,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
       {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       <div className="flex items-end flex-grow-1">
-        {createdAt ? <SubmitBtn text="Save" /> : <SubmitBtn text="Add an idea" />}
+        {createdAt ? <SubmitButton text="Save" /> : <SubmitButton text="Add an idea" />}
         {handleDelete && (
           <button
             type="button"
