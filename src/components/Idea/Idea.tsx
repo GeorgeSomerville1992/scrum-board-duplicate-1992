@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { format } from 'date-fns';
 import type { IdeaType } from '../../types';
+import { SubmitBtn } from '../Layout/SubmitBtn';
+import { ErrorText } from '../Layout/ErrorText';
 
 type IdeaProps = {
   idea: IdeaType;
@@ -13,33 +15,78 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   const { createdAt, modifiedAt } = idea.content;
   const [title, setTitle] = useState<string>(idea.content.title);
   const [description, setDescription] = useState<string>(idea.content.description);
+  const [descriptionError, setDescriptionError] = useState('');
+  const [titleError, setTitleError] = useState('');
   const [characterCountdown, setCharacterCountdown] = useState<number>(140 - description.length);
+  const isCloseToMaxLength = useMemo(() => characterCountdown <= 20, [characterCountdown]);
 
-  // title and description change handlers will create many re-renders, so we use useMemo to avoid unnecessary calculations.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const isCloseToMaxLength = useMemo(() => characterCountdown <= 20, [characterCountdown <= 20]);
-  const isDisabled = useMemo(
-    () => title.length === 0 || description.length === 0,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [title.length < 1, description.length < 1],
-  );
+  const handleValidation = () => {
+    let isValid = true;
+
+    if (titleError || descriptionError || !title || !description) {
+      isValid = false;
+    }
+
+    if (!title) {
+      setTitleError('Title is required');
+    }
+
+    if (!description) {
+      setDescriptionError('Description is required');
+    }
+
+    return isValid;
+  };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
     setCharacterCountdown(140 - e.target.value.length);
+    if (e.target.value.length < 1) {
+      setDescriptionError('Description is required');
+      return;
+    }
+
+    if (descriptionError && e.target.value.length > 0) {
+      setDescriptionError('');
+    }
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+
+    if (e.target.value.length < 1) {
+      setTitleError('Title is required');
+      return;
+    }
+
+    if (titleError && e.target.value.length > 0) {
+      setTitleError('');
+    }
   };
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  /* Keep the input place holder in focus when the idea is created or edited. */
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (autoFocus && inputRef.current) {
       inputRef.current.focus();
     }
   }, [autoFocus, idea]);
 
-  const onSubmit = () => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    const isValid = handleValidation();
+    if (!isValid) {
+      return;
+    }
+
+    if (createdAt) {
+      onEdit();
+    } else {
+      onCreate();
+    }
+  };
+
+  const onCreate = () => {
     const input = {
       title,
       description,
@@ -68,7 +115,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   };
 
   return (
-    <div className="flex flex-col bg-black rounded-md color text-white p-8 gap-4 h-100">
+    <form className="flex flex-col bg-black rounded-md color text-white p-8 gap-4 h-100" onSubmit={handleSubmit}>
       <input
         aria-label="title"
         value={title}
@@ -76,9 +123,8 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         data-testid="idea-item"
         className="pl-4 h-12 bg-light-grey text-black placeholder-black rounded-md"
         name="title"
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={(e) => handleTitleChange(e)}
         ref={inputRef}
-        required
       />
       <textarea
         value={description}
@@ -88,32 +134,22 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         name="description"
         aria-label="description"
         maxLength={140}
-        required
       />
-      {description && (
-        <p className={`${isCloseToMaxLength ? 'text-red-500' : ''}`}>{characterCountdown} characters remaining</p>
-      )}
+
+      {description &&
+        (isCloseToMaxLength ? (
+          <ErrorText text={`${characterCountdown} characters remaining`} />
+        ) : (
+          <p>{characterCountdown} characters remaining</p>
+        ))}
+
+      {titleError && <ErrorText text={titleError} />}
+      {descriptionError && <ErrorText text={descriptionError} />}
+
       {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       <div className="flex items-end flex-grow-1">
-        {createdAt ? (
-          <button
-            type="button"
-            className="bg-button-secondary text-black pl-4 pr-4 pt-2 pb-2 rounded-lg"
-            onClick={onEdit}
-          >
-            Edit
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="btn-primay bg-button-primary text-white pl-4 pr-4 pt-2 pb-2 rounded-lg"
-            onClick={onSubmit}
-            disabled={isDisabled}
-          >
-            Add an idea
-          </button>
-        )}
+        {createdAt ? <SubmitBtn text="Save" /> : <SubmitBtn text="Add an idea" />}
         {handleDelete && (
           <button
             type="button"
@@ -124,6 +160,6 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
           </button>
         )}
       </div>
-    </div>
+    </form>
   );
 };
