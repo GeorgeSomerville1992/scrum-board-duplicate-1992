@@ -5,21 +5,17 @@ import { App } from './App';
 const mockIdeas = [
   {
     id: 1,
-    content: {
-      title: 'Pear',
-      description: 'pear description',
-      createdAt: '2025-07-06T14:14:16.478Z',
-      modifiedAt: '',
-    },
+    title: 'Pear',
+    description: 'pear description',
+    createdAt: '2025-07-06T14:14:16.478Z',
+    modifiedAt: '',
   },
   {
     id: 2,
-    content: {
-      title: 'Apple',
-      description: 'apple description',
-      createdAt: '2025-07-06T14:14:16.478Z',
-      modifiedAt: '',
-    },
+    title: 'Apple',
+    description: 'apple description',
+    createdAt: '2025-07-06T14:14:16.478Z',
+    modifiedAt: '',
   },
 ];
 

@@ -6,15 +6,15 @@ import { ErrorText } from '../Layout/ErrorText';
 
 type IdeaProps = {
   idea: IdeaType;
-  handleEdit: (id: number, ideaInput: Pick<IdeaType['content'], 'title' | 'description'>) => void;
+  handleEdit: (id: number, ideaInput: Pick<IdeaType, 'title' | 'description'>) => void;
   handleDelete?: (id: number) => void;
   autoFocus: boolean;
-  handleCreate: (ideaInput: Pick<IdeaType['content'], 'title' | 'description'>) => void;
+  handleCreate: (ideaInput: Pick<IdeaType, 'title' | 'description'>) => void;
 };
 export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }: IdeaProps) => {
-  const { createdAt, modifiedAt } = idea.content;
-  const [title, setTitle] = useState<string>(idea.content.title);
-  const [description, setDescription] = useState<string>(idea.content.description);
+  const { createdAt, modifiedAt } = idea;
+  const [title, setTitle] = useState<string>(idea.title);
+  const [description, setDescription] = useState<string>(idea.description);
   const [descriptionError, setDescriptionError] = useState('');
   const [titleError, setTitleError] = useState('');
   const [characterCountdown, setCharacterCountdown] = useState<number>(140 - description.length);

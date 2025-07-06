@@ -10,12 +10,10 @@ export const Home = () => {
   // Default idea used as placeholder.
   const defaultIdea = {
     id: 0,
-    content: {
-      title: '',
-      description: '',
-      createdAt: '',
-      modifiedAt: '',
-    },
+    title: '',
+    description: '',
+    createdAt: '',
+    modifiedAt: '',
   };
 
   const [ideas, setIdeas] = useStorage('ideas', []);
@@ -34,10 +32,10 @@ export const Home = () => {
     }
   }, [notification]);
 
-  const handleCreate = (idea: Pick<IdeaType['content'], 'title' | 'description'>) => {
+  const handleCreate = (idea: Pick<IdeaType, 'title' | 'description'>) => {
     const newIdea = {
       id: ideas.length + 1,
-      content: idea,
+      ...idea,
     };
 
     setIdeas([...ideas, newIdea]);
@@ -51,17 +49,14 @@ export const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ideas.length]);
 
-  const handleEdit = (id: number, IdeaInput: Pick<IdeaType['content'], 'title' | 'description'>) => {
+  const handleEdit = (id: number, IdeaInput: Pick<IdeaType, 'title' | 'description'>) => {
     const updatedIdeas = ideas.map((idea: IdeaType) => {
       if (idea.id === id) {
         return {
           ...idea,
           // refactor to make less complicated - we dont need a content object here
-          content: {
-            ...idea.content,
-            ...IdeaInput,
-            modifiedAt: new Date(),
-          },
+          ...IdeaInput,
+          modifiedAt: new Date(),
         };
       }
       // todo look at this?

@@ -15,13 +15,13 @@ export const sortApi: SortApi = {
   alphabetically: {
     key: 'alphabetically',
     sort: (ideas: IdeaType[]) => {
-      return [...ideas].sort((a, b) => a.content.title.localeCompare(b.content.title));
+      return [...ideas].sort((a, b) => a.title.localeCompare(b.title));
     },
   },
   creationDate: {
     key: 'creationDate',
     sort: (ideas: IdeaType[]) => {
-      return [...ideas].sort((a, b) => compareAsc(a.content.createdAt, b.content.createdAt));
+      return [...ideas].sort((a, b) => compareAsc(a.createdAt, b.createdAt));
     },
   },
 };
