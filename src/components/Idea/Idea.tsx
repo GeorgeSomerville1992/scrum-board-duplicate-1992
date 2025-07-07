@@ -105,7 +105,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
       <textarea
         value={formik.values.description}
         onChange={handleDescriptionChange}
-        className="pl-4 pt-2 h-18 align-middle rounded-md bg-light-grey placeholder-black text-black overflow-visible"
+        className="pl-4 pt-2 h-60 sm:h-30 lg:h-18 align-middle rounded-md bg-light-grey placeholder-black text-black overflow-visible"
         placeholder="Add a more detailed description"
         name="description"
         aria-label="description"
