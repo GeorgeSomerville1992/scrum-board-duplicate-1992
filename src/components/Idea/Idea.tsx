@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import type { IdeaType } from '../../types';
 import { SubmitButton } from '../Layout/SubmitButton';
 import { ErrorText } from '../Layout/ErrorText';
+import { useForm, SubmitHandler } from "react-hook-form"
 
 type IdeaProps = {
   idea: IdeaType;
@@ -11,6 +12,12 @@ type IdeaProps = {
   autoFocus: boolean;
   handleCreate: (ideaInput: Pick<IdeaType, 'title' | 'description'>) => void;
 };
+
+type Inputs = {
+  title: string
+  description: string
+}
+
 export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }: IdeaProps) => {
   const { createdAt, modifiedAt } = idea;
   const [title, setTitle] = useState<string>(idea.title);
@@ -20,65 +27,50 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   const [characterCountdown, setCharacterCountdown] = useState<number>(140 - description.length);
   const isCloseToMaxLength = useMemo(() => characterCountdown <= 20, [characterCountdown]);
 
-  const handleValidation = () => {
-    let isValid = true;
-
-    if (titleError || descriptionError || !title || !description) {
-      isValid = false;
-    }
-
-    if (!title) {
-      setTitleError('Title is required');
-    }
-
-    if (!description) {
-      setDescriptionError('Description is required');
-    }
-
-    return isValid;
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setFocus,
+    clearErrors,
+  } = useForm<Inputs>()
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
     setCharacterCountdown(140 - e.target.value.length);
-    if (e.target.value.length < 1) {
-      setDescriptionError('Description is required');
-      return;
-    }
-
-    if (descriptionError && e.target.value.length > 0) {
-      setDescriptionError('');
+    
+    if (errors[e.target.name]) {
+      console.log('triggering validation for', e.target.name);
+      // triggerValidation({ name: e.target.name });
+      clearErrors(e.target.name);
     }
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
 
-    if (e.target.value.length < 1) {
-      setTitleError('Title is required');
-      return;
-    }
-
-    if (titleError && e.target.value.length > 0) {
-      setTitleError('');
+    if (errors[e.target.name]) {
+      console.log('triggering validation for', e.target.name);
+      // triggerValidation({ name: e.target.name });
+      clearErrors(e.target.name);
     }
   };
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (autoFocus && inputRef.current) {
-      inputRef.current.focus();
+    if (autoFocus && titleInputRef.current) {
+      titleInputRef.current.focus();
     }
   }, [autoFocus, idea]);
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    const isValid = handleValidation();
-    if (!isValid) {
-      return;
+  useEffect(() => {
+    if(autoFocus && setFocus) {
+      setFocus("title");
     }
+  }, [setFocus, autoFocus, idea])
 
+  const onSubmit: SubmitHandler<Inputs> = () => {
     if (createdAt) {
       onEdit();
     } else {
@@ -115,8 +107,12 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
   };
 
   return (
-    <form className="flex flex-col bg-black rounded-md color text-white p-8 gap-4 h-100" onSubmit={handleSubmit}>
+    <form className="flex flex-col bg-black rounded-md color text-white p-8 gap-4 h-100" onSubmit={handleSubmit(onSubmit)}>
       <input
+        {...register('title', { required: {
+          value: true,
+          message: "Title is required",
+        }})} 
         aria-label="title"
         value={title}
         placeholder="Add a title"
@@ -124,10 +120,11 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         className="pl-4 h-12 bg-light-grey text-black placeholder-black rounded-md"
         name="title"
         onChange={(e) => handleTitleChange(e)}
-        ref={inputRef}
+        // ref={titleInputRef}
       />
       <textarea
         value={description}
+        {...register('description', { required: "Description is required" })}
         onChange={(e) => handleDescriptionChange(e)}
         className="pl-4 pt-2 h-18 align-middle rounded-md bg-light-grey placeholder-black text-black overflow-visible"
         placeholder="Add a more detailed description"
@@ -143,8 +140,8 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
           <p>{characterCountdown} characters remaining</p>
         ))}
 
-      {titleError && <ErrorText text={titleError} />}
-      {descriptionError && <ErrorText text={descriptionError} />}
+      {errors.title?.message && <ErrorText text={errors.title.message} />}
+      {errors.description?.message && <ErrorText text={errors.description.message} />}
 
       {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
