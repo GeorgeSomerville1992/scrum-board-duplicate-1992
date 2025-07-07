@@ -104,7 +104,7 @@ export const Home = () => {
         </button>
       </div>
       {notification && <Notification notification={notification} />}
-      <section className="p-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section className="md:p-12 p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>{memoizedIdea}</div>
         <ul>
           {ideas.map((idea: IdeaType) => {
