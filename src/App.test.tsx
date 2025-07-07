@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { App } from './App';
 
 const mockIdeas = [
@@ -47,12 +47,15 @@ describe('App', () => {
 
     it('handles empty title and description', async () => {
       render(<App />);
-      const submit = screen.getByRole('button', { name: /Add/i });
+      const submit = screen.getByRole('button', { name: /Add an idea/i });
+      await act(async () => {
+        await fireEvent.click(submit);
+      });
 
-      await fireEvent.click(submit);
-
-      expect(screen.getByText('Title is required')).toBeInTheDocument();
-      expect(screen.getByText('Description is required')).toBeInTheDocument();
+      waitFor(() => {
+        expect(screen.getByText('Title is required')).toBeInTheDocument();
+        expect(screen.getByText('Description is required')).toBeInTheDocument();
+      });
 
       // Error should no longer be displayed when user starts typing again.
 
@@ -60,8 +63,11 @@ describe('App', () => {
       const description = screen.getByRole('textbox', {
         name: /description/i,
       });
-      await fireEvent.change(title, { target: { value: 'testTitle' } });
-      await fireEvent.change(description, { target: { value: 'testDescription' } });
+
+      await act(async () => {
+        await fireEvent.change(title, { target: { value: 'testTitle' } });
+        await fireEvent.change(description, { target: { value: 'testDescription' } });
+      });
 
       expect(screen.queryByText('Title is required')).not.toBeInTheDocument();
       expect(screen.queryByText('Description is required')).not.toBeInTheDocument();
@@ -75,12 +81,17 @@ describe('App', () => {
       });
       const submit = screen.getByRole('button', { name: /Add/i });
 
-      await fireEvent.change(title, { target: { value: 'testTitle' } });
-      await fireEvent.change(description, { target: { value: 'testDescription' } });
+      await act(async () => {
+        await fireEvent.change(title, { target: { value: 'testTitle' } });
+        await fireEvent.change(description, { target: { value: 'testDescription' } });
+      });
 
       expect(title).toHaveValue('testTitle');
       expect(description).toHaveValue('testDescription');
-      await fireEvent.click(submit);
+
+      await act(async () => {
+        await fireEvent.click(submit);
+      });
 
       expect(screen.queryAllByRole('textbox')).toHaveLength(4);
       expect(screen.getByText('Idea created successfully!')).toBeInTheDocument();
@@ -96,16 +107,19 @@ describe('App', () => {
       });
       const submit = screen.getByRole('button', { name: /Add/i });
 
-      await fireEvent.change(title, { target: { value: 'testTitle' } });
-      await fireEvent.change(description, { target: { value: 'testDescription' } });
+      await act(async () => {
+        await fireEvent.change(title, { target: { value: 'testTitle' } });
+        await fireEvent.change(description, { target: { value: 'testDescription' } });
+        await fireEvent.click(submit);
+      });
 
-      await fireEvent.click(submit);
       // expect the idea was created
       expect(screen.queryAllByRole('textbox')).toHaveLength(4);
 
       const deleteBtn = screen.getByRole('button', { name: /Delete/i });
 
       expect(deleteBtn).toBeInTheDocument();
+
       await fireEvent.click(deleteBtn);
 
       // test the notification
@@ -129,8 +143,10 @@ describe('App', () => {
         name: /description/i,
       })[1];
 
-      await fireEvent.change(title, { target: { value: '' } });
-      await fireEvent.change(description, { target: { value: '' } });
+      await act(async () => {
+        await fireEvent.change(title, { target: { value: '' } });
+        await fireEvent.change(description, { target: { value: '' } });
+      });
 
       const save = screen.getAllByRole('button', { name: /Save/i })[0];
 
@@ -153,14 +169,17 @@ describe('App', () => {
         name: /description/i,
       });
       const submit = screen.getByRole('button', { name: /Add an idea/i });
+      await act(async () => {
+        await fireEvent.change(title, { target: { value: 'testTitle1' } });
+        await fireEvent.change(description, { target: { value: 'testDescription1' } });
+        await fireEvent.click(submit);
+      });
 
-      await fireEvent.change(title, { target: { value: 'testTitle1' } });
-      await fireEvent.change(description, { target: { value: 'testDescription1' } });
-      await fireEvent.click(submit);
-
-      await fireEvent.change(title, { target: { value: 'testTitle2' } });
-      await fireEvent.change(description, { target: { value: 'testDescription2' } });
-      await fireEvent.click(submit);
+      await act(async () => {
+        await fireEvent.change(title, { target: { value: 'testTitle2' } });
+        await fireEvent.change(description, { target: { value: 'testDescription2' } });
+        await fireEvent.click(submit);
+      });
 
       const save = screen.getAllByRole('button', { name: /Save/i })[1];
 
@@ -171,10 +190,12 @@ describe('App', () => {
         name: /description/i,
       })[1];
 
-      await fireEvent.change(titleEdit, { target: { value: 'testTitle1Edited' } });
-      await fireEvent.change(descriptionEdit, { target: { value: 'Edited' } });
+      await act(async () => {
+        await fireEvent.change(titleEdit, { target: { value: 'testTitle1Edited' } });
+        await fireEvent.change(descriptionEdit, { target: { value: 'Edited' } });
 
-      await fireEvent.click(save);
+        await fireEvent.click(save);
+      });
 
       expect(screen.getByText('last modified at 01-01-2022 00:00:00')).toBeInTheDocument();
       expect(screen.queryAllByRole('textbox', { name: /title/i })[1]).toHaveValue('testTitle1Edited');
