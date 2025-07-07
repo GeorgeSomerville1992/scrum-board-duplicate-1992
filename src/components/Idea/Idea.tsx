@@ -31,7 +31,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
       createdAt: new Date(),
     };
     handleCreate(input);
-
+    formik.resetForm();
     setCharacterCountdown(140);
   };
 
