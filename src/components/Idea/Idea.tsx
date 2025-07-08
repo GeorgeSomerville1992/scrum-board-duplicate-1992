@@ -5,17 +5,19 @@ import { SubmitButton } from '../Layout/SubmitButton';
 import { ErrorText } from '../Layout/ErrorText';
 import { useFormik } from 'formik';
 
+type IdeaInput = Pick<IdeaType, 'title' | 'description'>;
+
 type IdeaProps = {
   idea: IdeaType;
-  handleEdit: (id: number, ideaInput: Pick<IdeaType, 'title' | 'description'>) => void;
+  handleEdit: (id: number, ideaInput: IdeaInput) => void;
   handleDelete?: (id: number) => void;
   autoFocus: boolean;
-  handleCreate: (ideaInput: Pick<IdeaType, 'title' | 'description'>) => void;
+  handleCreate: (ideaInput: IdeaInput) => void;
 };
 export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }: IdeaProps) => {
   const { createdAt, modifiedAt } = idea;
 
-  const handleSubmit = (values: Pick<IdeaType, 'title' | 'description'>) => {
+  const handleSubmit = (values: IdeaInput) => {
     if (createdAt) {
       onEdit(values);
     } else {
@@ -23,7 +25,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
     }
   };
 
-  const onCreate = (values: Pick<IdeaType, 'title' | 'description'>) => {
+  const onCreate = (values: IdeaInput) => {
     const { title, description } = values;
     const input = {
       title,
@@ -35,7 +37,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
     setCharacterCountdown(140);
   };
 
-  const onEdit = (values: Pick<IdeaType, 'title' | 'description'>) => {
+  const onEdit = (values: IdeaInput) => {
     const { title, description } = values;
     const input = {
       title,
@@ -43,6 +45,12 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
     };
 
     handleEdit(idea.id, input);
+  };
+
+  const onDelete = () => {
+    if (handleDelete) {
+      handleDelete(idea.id);
+    }
   };
 
   const formik = useFormik({
@@ -84,11 +92,6 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
     }
   }, [autoFocus, idea]);
 
-  const onDelete = () => {
-    if (handleDelete) {
-      handleDelete(idea.id);
-    }
-  };
   const isValid = !formik.errors.description && !formik.errors.title;
   return (
     <form className="flex flex-col bg-black rounded-md color text-white p-8 gap-4 h-120" onSubmit={formik.handleSubmit}>
