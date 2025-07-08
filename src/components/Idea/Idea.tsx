@@ -89,9 +89,9 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
       handleDelete(idea.id);
     }
   };
-
+  const isValid = !formik.errors.description && !formik.errors.title;
   return (
-    <form className="flex flex-col bg-black rounded-md color text-white p-8 gap-4 h-100" onSubmit={formik.handleSubmit}>
+    <form className="flex flex-col bg-black rounded-md color text-white p-8 gap-4 h-120" onSubmit={formik.handleSubmit}>
       <input
         aria-label="title"
         value={formik.values.title}
@@ -102,10 +102,11 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         onChange={handleTitleChange}
         ref={inputRef}
       />
+      {formik.errors.title && <ErrorText text={formik.errors.title} />}
       <textarea
         value={formik.values.description}
         onChange={handleDescriptionChange}
-        className="pl-4 pt-2 h-60 sm:h-30 lg:h-18 align-middle rounded-md bg-light-grey placeholder-black text-black overflow-visible"
+        className="pl-4 pt-2 h-60 lg:h-18 align-middle rounded-md bg-light-grey placeholder-black text-black overflow-visible"
         placeholder="Add a more detailed description"
         name="description"
         aria-label="description"
@@ -119,11 +120,10 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
           <p>{characterCountdown} characters remaining</p>
         ))}
 
-      {formik.errors.title && <ErrorText text={formik.errors.title} />}
       {formik.errors.description && <ErrorText text={formik.errors.description} />}
 
-      {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
-      {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
+      {isValid && modifiedAt ? <p>Last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
+      {isValid && createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       <div className="flex items-end flex-grow-1">
         {createdAt ? <SubmitButton text="Save" /> : <SubmitButton text="Add an idea" />}
         {handleDelete && (
