@@ -3,103 +3,42 @@ import { format } from 'date-fns';
 import type { IdeaType } from '../../types';
 import { SubmitButton } from '../Layout/SubmitButton';
 import { ErrorText } from '../Layout/ErrorText';
+import { useFormik } from 'formik';
+
+type IdeaInput = Pick<IdeaType, 'title' | 'description'>;
 
 type IdeaProps = {
   idea: IdeaType;
-  handleEdit: (id: number, ideaInput: Pick<IdeaType, 'title' | 'description'>) => void;
+  handleEdit: (id: number, ideaInput: IdeaInput) => void;
   handleDelete?: (id: number) => void;
   autoFocus: boolean;
-  handleCreate: (ideaInput: Pick<IdeaType, 'title' | 'description'>) => void;
+  handleCreate: (ideaInput: IdeaInput) => void;
 };
 export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }: IdeaProps) => {
   const { createdAt, modifiedAt } = idea;
-  const [title, setTitle] = useState<string>(idea.title);
-  const [description, setDescription] = useState<string>(idea.description);
-  const [descriptionError, setDescriptionError] = useState('');
-  const [titleError, setTitleError] = useState('');
-  const [characterCountdown, setCharacterCountdown] = useState<number>(140 - description.length);
-  const isCloseToMaxLength = useMemo(() => characterCountdown <= 20, [characterCountdown]);
 
-  const handleValidation = () => {
-    let isValid = true;
-
-    if (titleError || descriptionError || !title || !description) {
-      isValid = false;
-    }
-
-    if (!title) {
-      setTitleError('Title is required');
-    }
-
-    if (!description) {
-      setDescriptionError('Description is required');
-    }
-
-    return isValid;
-  };
-
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDescription(e.target.value);
-    setCharacterCountdown(140 - e.target.value.length);
-    if (e.target.value.length < 1) {
-      setDescriptionError('Description is required');
-      return;
-    }
-
-    if (descriptionError && e.target.value.length > 0) {
-      setDescriptionError('');
-    }
-  };
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-
-    if (e.target.value.length < 1) {
-      setTitleError('Title is required');
-      return;
-    }
-
-    if (titleError && e.target.value.length > 0) {
-      setTitleError('');
-    }
-  };
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (autoFocus && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [autoFocus, idea]);
-
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    const isValid = handleValidation();
-    if (!isValid) {
-      return;
-    }
-
+  const handleSubmit = (values: IdeaInput) => {
     if (createdAt) {
-      onEdit();
+      onEdit(values);
     } else {
-      onCreate();
+      onCreate(values);
     }
   };
 
-  const onCreate = () => {
+  const onCreate = (values: IdeaInput) => {
+    const { title, description } = values;
     const input = {
       title,
       description,
       createdAt: new Date(),
     };
     handleCreate(input);
-
-    setTitle('');
-    setDescription('');
+    formik.resetForm();
     setCharacterCountdown(140);
   };
 
-  const onEdit = () => {
+  const onEdit = (values: IdeaInput) => {
+    const { title, description } = values;
     const input = {
       title,
       description,
@@ -114,40 +53,80 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
     }
   };
 
+  const formik = useFormik({
+    initialValues: {
+      title: idea.title,
+      description: idea.description,
+    },
+    validate: (values) => {
+      const errors: { title?: string; description?: string } = {};
+      if (!values.title) {
+        errors.title = 'Title is required';
+      }
+      if (!values.description) {
+        errors.description = 'Description is required';
+      }
+
+      return errors;
+    },
+    onSubmit: handleSubmit,
+  });
+
+  const [characterCountdown, setCharacterCountdown] = useState<number>(140 - formik.values.description.length);
+  const isCloseToMaxLength = useMemo(() => characterCountdown <= 20, [characterCountdown]);
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    formik.handleChange(e);
+    setCharacterCountdown(140 - e.target.value.length);
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    formik.handleChange(e);
+  };
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus, idea]);
+
+  const isValid = !formik.errors.description && !formik.errors.title;
   return (
-    <form className="flex flex-col bg-black rounded-md color text-white p-8 gap-4 h-100" onSubmit={handleSubmit}>
+    <form className="flex flex-col bg-black rounded-md color text-white p-8 gap-4 h-120" onSubmit={formik.handleSubmit}>
       <input
         aria-label="title"
-        value={title}
+        value={formik.values.title}
         placeholder="Add a title"
         data-testid="idea-item"
         className="pl-4 h-12 bg-light-grey text-black placeholder-black rounded-md"
         name="title"
-        onChange={(e) => handleTitleChange(e)}
+        onChange={handleTitleChange}
         ref={inputRef}
       />
+      {formik.errors.title && <ErrorText text={formik.errors.title} />}
       <textarea
-        value={description}
-        onChange={(e) => handleDescriptionChange(e)}
-        className="pl-4 pt-2 h-18 align-middle rounded-md bg-light-grey placeholder-black text-black overflow-visible"
+        value={formik.values.description}
+        onChange={handleDescriptionChange}
+        className="pl-4 pt-2 h-60 lg:h-18 align-middle rounded-md bg-light-grey placeholder-black text-black overflow-visible"
         placeholder="Add a more detailed description"
         name="description"
         aria-label="description"
         maxLength={140}
       />
 
-      {description &&
+      {formik.values.description &&
         (isCloseToMaxLength ? (
           <ErrorText text={`${characterCountdown} characters remaining`} />
         ) : (
           <p>{characterCountdown} characters remaining</p>
         ))}
 
-      {titleError && <ErrorText text={titleError} />}
-      {descriptionError && <ErrorText text={descriptionError} />}
+      {formik.errors.description && <ErrorText text={formik.errors.description} />}
 
-      {modifiedAt ? <p>last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
-      {createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
+      {isValid && modifiedAt ? <p>Last modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
+      {isValid && createdAt ? <p>Last created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       <div className="flex items-end flex-grow-1">
         {createdAt ? <SubmitButton text="Save" /> : <SubmitButton text="Add an idea" />}
         {handleDelete && (
