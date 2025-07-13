@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Idea } from '../Idea/Idea';
 import type { IdeaType } from '../../types';
 import { Sort } from '../Sort/Sort';
@@ -42,13 +42,6 @@ export const Home = () => {
     setNotification('created');
   };
 
-  useEffect(() => {
-    if (sortRef.current) {
-      handleSort(sortRef.current);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ideas.length]);
-
   const handleEdit = (id: number, IdeaInput: Pick<IdeaType, 'title' | 'description'>) => {
     const updatedIdeas = ideas.map((idea: IdeaType) => {
       if (idea.id === id) {
@@ -66,14 +59,23 @@ export const Home = () => {
     setNotification('updated');
   };
 
-  const handleSort = (sort: keyof typeof sortApi) => {
-    // Do not sort if default is selected
-    if (sort) {
-      const sortedIdeas = sortApi[sort].sort(ideas);
-      setIdeas(sortedIdeas);
+  const handleSort = useCallback(
+    (sort: keyof typeof sortApi) => {
+      // Do not sort if default is selected
+      if (sort) {
+        const sortedIdeas = sortApi[sort].sort(ideas);
+        setIdeas(sortedIdeas);
+      }
+      sortRef.current = sort;
+    },
+    [ideas, setIdeas],
+  );
+
+  useEffect(() => {
+    if (sortRef.current) {
+      handleSort(sortRef.current);
     }
-    sortRef.current = sort;
-  };
+  }, [handleSort, ideas.length]);
 
   const handleDelete = (id: number) => {
     const filteredIdeas = ideas.filter((idea: IdeaType) => idea.id !== id);
