@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Idea } from '../Idea/Idea';
 import type { IdeaType } from '../../types';
 import { Sort } from '../Sort/Sort';
@@ -59,23 +59,14 @@ export const Home = () => {
     setNotification('updated');
   };
 
-  const handleSort = useCallback(
-    (sort: keyof typeof sortApi) => {
-      // Do not sort if default is selected
-      if (sort) {
-        const sortedIdeas = sortApi[sort].sort(ideas);
-        setIdeas(sortedIdeas);
-      }
-      sortRef.current = sort;
-    },
-    [ideas, setIdeas],
-  );
-
-  useEffect(() => {
-    if (sortRef.current) {
-      handleSort(sortRef.current);
+  const handleSort = (sort: keyof typeof sortApi) => {
+    // Do not sort if default is selected
+    if (sort) {
+      const sortedIdeas = sortApi[sort].sort(ideas);
+      setIdeas(sortedIdeas);
     }
-  }, [handleSort, ideas.length]);
+    sortRef.current = sort;
+  };
 
   const handleDelete = (id: number) => {
     const filteredIdeas = ideas.filter((idea: IdeaType) => idea.id !== id);
@@ -105,7 +96,7 @@ export const Home = () => {
         </button>
       </div>
       {notification && <Notification notification={notification} />}
-      <section className="md:p-12 p-3 sm:p-6 grid grid-cols-1 md:max-w-120 gap-4">
+      <section className="md:p-12 p-3 sm:p-6 grid grid-cols-1 md:max-w-150 gap-4">
         <div>{memoizedIdea}</div>
         <ul>
           {ideas.map((idea: IdeaType) => {

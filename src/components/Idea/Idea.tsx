@@ -92,22 +92,32 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
     }
   }, [autoFocus, idea]);
 
-  const isValid = !formik.errors.description && !formik.errors.title;
   return (
     <form
       className={`flex flex-col bg-black rounded-(--input-border-radius) color text-white p-6 gap-4 max-h-120 min-h-(--form-min-height)`}
       onSubmit={formik.handleSubmit}
     >
+      {formik.errors.title ? (
+        <ErrorText text={formik.errors.title} />
+      ) : (
+        <label htmlFor={`idea-${idea.id}-title`}>Title</label>
+      )}
       <input
         aria-label="title"
         value={formik.values.title}
         placeholder="Add a title"
         data-testid="idea-item"
+        // id={`idea-${idea.id}-title`}
         className="pl-4 h-12 bg-(--color-input-background) text-lg placeholder-(--color-input-text) rounded-(--input-border-radius) text-(--color-input-text)"
         name="title"
         onChange={handleTitleChange}
         ref={inputRef}
       />
+      {formik.errors.description ? (
+        <ErrorText text={formik.errors.description} />
+      ) : (
+        <label htmlFor={`idea-${idea.id}-description`}>description</label>
+      )}
       <textarea
         value={formik.values.description}
         onChange={handleDescriptionChange}
@@ -117,7 +127,6 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         aria-label="description"
         maxLength={140}
       />
-      {formik.errors.title && <ErrorText text={formik.errors.title} />}
       {formik.values.description &&
         (isCloseToMaxLength ? (
           <ErrorText text={`${characterCountdown} characters remaining`} />
@@ -125,10 +134,6 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
           <p>{characterCountdown} characters remaining</p>
         ))}
 
-      {formik.errors.description && <ErrorText text={formik.errors.description} />}
-
-      {isValid && modifiedAt ? <p>Modified at {format(modifiedAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
-      {isValid && createdAt ? <p>Created at {format(createdAt, 'dd-MM-yyyy HH:mm:ss')}</p> : ''}
       <div className="flex items-end flex-grow-1">
         {createdAt ? <SubmitButton text="Save" /> : <SubmitButton text="Add an idea" />}
         {handleDelete && (
@@ -140,6 +145,11 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
             Delete
           </button>
         )}
+
+        <div className="ml-auto text-xs text-(--color-input-text) flex items-end flex-grow-1 flex-col justify-evenly">
+          {modifiedAt && <p>Modified at: {format(modifiedAt, 'dd/MM/yyyy HH:mm:ss')}</p>}
+          {createdAt && <p>Created at: {format(createdAt, 'dd/MM/yyyy HH:mm:ss')}</p>}
+        </div>
       </div>
     </form>
   );

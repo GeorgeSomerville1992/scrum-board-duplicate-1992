@@ -1,1 +1,1 @@
-export const ErrorText = ({ text }: { text: string }) => <p className="text-red-500">{text}</p>;
+export const ErrorText = ({ text }: { text: string }) => <label className="text-red-500">{text}</label>;
