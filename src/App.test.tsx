@@ -158,8 +158,8 @@ describe('App', () => {
       expect(screen.getByText('Description is required')).toBeInTheDocument();
 
       // check last modified date is not in document.
-      expect(screen.queryByText('Last modified at')).not.toBeInTheDocument();
-      expect(screen.queryByText('Last created at')).not.toBeInTheDocument();
+      expect(screen.queryByText('Modified at')).not.toBeInTheDocument();
+      expect(screen.queryByText('Created at')).not.toBeInTheDocument();
     });
 
     it('Edits a Idea', async () => {
@@ -201,7 +201,7 @@ describe('App', () => {
         await fireEvent.click(save);
       });
 
-      expect(screen.getByText('Last modified at 01-01-2022 00:00:00')).toBeInTheDocument();
+      expect(screen.getByText('Modified at 01-01-2022 00:00:00')).toBeInTheDocument();
       expect(screen.queryAllByRole('textbox', { name: /title/i })[1]).toHaveValue('testTitle1Edited');
 
       // check other idea is not modified
