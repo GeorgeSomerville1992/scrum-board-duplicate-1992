@@ -107,7 +107,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         value={formik.values.title}
         placeholder="Add a title"
         data-testid="idea-item"
-        // id={`idea-${idea.id}-title`}
+        id={`idea-${idea.id}-title`}
         className="pl-4 h-12 bg-(--color-input-background) text-lg placeholder-(--color-input-text) rounded-(--input-border-radius) text-(--color-input-text)"
         name="title"
         onChange={handleTitleChange}
@@ -116,7 +116,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
       {formik.errors.description ? (
         <ErrorText text={formik.errors.description} />
       ) : (
-        <label htmlFor={`idea-${idea.id}-description`}>description</label>
+        <label htmlFor={`idea-${idea.id}-description`}>Description</label>
       )}
       <textarea
         value={formik.values.description}
@@ -124,6 +124,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         className="pl-4 pt-2 h-20 lg:h-18 align-middle text-lg rounded-(--input-border-radius) bg-(--color-input-background) placeholder-(--color-input-text) text-(--color-input-text) overflow-visible"
         placeholder="Add a more detailed description"
         name="description"
+        id={`idea-${idea.id}-description`}
         aria-label="description"
         maxLength={140}
       />

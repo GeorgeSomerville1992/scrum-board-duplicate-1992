@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
+  /* Colours */
   --color-black: #101204;
   --color-light-grey: #d3d3d3;
   --color-button-primary: #0c66e4;
@@ -8,10 +9,12 @@
   --color-white: #ffffff;
   --color-input-text: #b6c2cf;
   --color-input-background: #22272b;
-  --input-border-radius: 1rem;
 
+  /* sizes */
+  --input-border-radius: 1rem;
   --form-min-height: 23rem;
 
+  /* Animations */
   --animate-pulse: pulse 3s 1;
   @keyframes pulse {
     0% {
