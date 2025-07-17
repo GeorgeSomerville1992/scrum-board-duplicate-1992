@@ -12,7 +12,8 @@
 
   /* sizes */
   --input-border-radius: 1rem;
-  --form-min-height: 23rem;
+  --form-min-height: 25rem;
+  --form-min-height-desktop: 23rem;
 
   /* Animations */
   --animate-pulse: pulse 3s 1;

@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export const useStorage = (key: string, defaultValue: []) => {
   const [value, setValue] = useState(() => {
@@ -14,9 +14,5 @@ export const useStorage = (key: string, defaultValue: []) => {
     window.localStorage.setItem(key, JSON.stringify(value));
   }, [key, value]);
 
-  const remove = useCallback(() => {
-    setValue(undefined);
-  }, []);
-
-  return [value, setValue, remove];
+  return [value, setValue];
 };

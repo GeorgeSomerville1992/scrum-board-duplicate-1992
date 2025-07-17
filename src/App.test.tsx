@@ -30,7 +30,7 @@ describe('App', () => {
   });
 
   describe('Form', () => {
-    it('Renders a Idea on inital load', () => {
+    it('Renders a Idea on initial load', () => {
       render(<App />);
 
       expect(
@@ -71,6 +71,28 @@ describe('App', () => {
 
       expect(screen.queryByText('Title is required')).not.toBeInTheDocument();
       expect(screen.queryByText('Description is required')).not.toBeInTheDocument();
+    });
+
+    it('handles when description is at max length', async () => {
+      render(<App />);
+      const title = screen.getByRole('textbox', { name: /title/i });
+      const description = screen.getByRole('textbox', {
+        name: /description/i,
+      });
+      const submit = screen.getByRole('button', { name: /Add/i });
+
+      await act(async () => {
+        await fireEvent.change(title, { target: { value: 'testTitle' } });
+        await fireEvent.change(description, { target: { value: 'a'.repeat(140) } });
+      });
+
+      expect(description).toHaveValue('a'.repeat(140));
+
+      await act(async () => {
+        await fireEvent.click(submit);
+      });
+
+      expect(screen.getByText('0 characters remaining')).toBeInTheDocument();
     });
 
     it('Adds a Idea', async () => {
@@ -134,7 +156,7 @@ describe('App', () => {
       expect(screen.queryByText('created')).not.toBeInTheDocument();
     });
 
-    it('handles empty title and description on edit', async () => {
+    it('Handles empty title and description on edit', async () => {
       localStorage.setItem('ideas', JSON.stringify(mockIdeas));
       render(<App />);
 

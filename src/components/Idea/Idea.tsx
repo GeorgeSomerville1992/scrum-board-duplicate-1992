@@ -69,6 +69,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
 
       return errors;
     },
+    validateOnBlur: false,
     onSubmit: handleSubmit,
   });
 
@@ -94,7 +95,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
 
   return (
     <form
-      className={`flex flex-col bg-black rounded-(--input-border-radius) color text-white p-6 gap-4 max-h-120 min-h-(--form-min-height)`}
+      className={`flex flex-col bg-black rounded-(--input-border-radius) color text-white p-6 gap-4 max-h-120 min-h-(--form-min-height) sm: min-h-(--form-min-height-desktop)`}
       onSubmit={formik.handleSubmit}
     >
       {formik.errors.title ? (
@@ -121,36 +122,35 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
       <textarea
         value={formik.values.description}
         onChange={handleDescriptionChange}
-        className="pl-4 pt-2 h-20 lg:h-18 align-middle text-lg rounded-(--input-border-radius) bg-(--color-input-background) placeholder-(--color-input-text) text-(--color-input-text) overflow-visible"
+        className="pl-4 pt-2 h-20 align-middle text-lg rounded-(--input-border-radius) bg-(--color-input-background) placeholder-(--color-input-text) text-(--color-input-text) overflow-visible"
         placeholder="Add a more detailed description"
         name="description"
         id={`idea-${idea.id}-description`}
         aria-label="description"
         maxLength={140}
       />
-      {formik.values.description &&
-        (isCloseToMaxLength ? (
-          <ErrorText text={`${characterCountdown} characters remaining`} />
-        ) : (
-          <p>{characterCountdown} characters remaining</p>
-        ))}
+      {formik.values.description && (
+        <p className={`${isCloseToMaxLength ? 'text-red-500' : ''}`}>{characterCountdown} characters remaining</p>
+      )}
 
-      <div className="flex items-end flex-grow-1">
+      <div className="flex flex-col gap-4 items-end flex-grow-1 justify-end sm:flex-row sm:justify-normal sm:gap-0">
         {createdAt ? <SubmitButton text="Save" /> : <SubmitButton text="Add an idea" />}
         {handleDelete && (
           <button
             type="button"
-            className="bg-button-secondary text-black pl-4 pr-4 pt-2 pb-2 rounded-lg ml-4"
+            className="bg-button-secondary w-full sm:w-auto text-black pl-4 pr-4 pt-2 pb-2 rounded-lg ml-4"
             onClick={onDelete}
           >
             Delete
           </button>
         )}
 
-        <div className="ml-auto text-xs text-(--color-input-text) flex items-end flex-grow-1 flex-col justify-evenly">
-          {modifiedAt && <p>Modified at: {format(modifiedAt, 'dd/MM/yyyy HH:mm:ss')}</p>}
-          {createdAt && <p>Created at: {format(createdAt, 'dd/MM/yyyy HH:mm:ss')}</p>}
-        </div>
+        {createdAt && (
+          <div className="text-xs text-(--color-input-text) flex justify-between flex-row w-full sm:flex-col sm:w-auto sm:items-end sm:flex-grow-1 sm:h-full sm:gap-2">
+            {modifiedAt && <p>Modified at: {format(modifiedAt, 'dd/MM/yyyy HH:mm:ss')}</p>}
+            {createdAt && <p>Created at: {format(createdAt, 'dd/MM/yyyy HH:mm:ss')}</p>}
+          </div>
+        )}
       </div>
     </form>
   );

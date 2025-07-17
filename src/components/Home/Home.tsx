@@ -51,7 +51,6 @@ export const Home = () => {
           modifiedAt: new Date(),
         };
       }
-      // todo look at this?
       return idea;
     });
 
@@ -96,7 +95,7 @@ export const Home = () => {
         </button>
       </div>
       {notification && <Notification notification={notification} />}
-      <section className="md:p-12 p-3 sm:p-6 grid grid-cols-1 md:max-w-150 gap-4">
+      <section className="sm:p-12 p-3 grid grid-cols-1 sm:max-w-150 gap-4">
         <div>{memoizedIdea}</div>
         <ul>
           {ideas.map((idea: IdeaType) => {
