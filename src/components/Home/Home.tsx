@@ -88,14 +88,14 @@ export const Home = () => {
 
   return (
     <>
-      <div className="w-screen bg-light-grey flex pl-12 h-12 top-15">
+      <div className="w-screen bg-light-grey flex pl-8 h-12 top-15">
         <Sort handleSort={handleSort} ideas={ideas} />
         <button type="button" onClick={handleClear} className="pl-6">
           Clear
         </button>
       </div>
       {notification && <Notification notification={notification} />}
-      <section className="sm:p-12 p-3 grid grid-cols-1 sm:max-w-150 gap-4">
+      <section className="sm:p-12 p-3 grid grid-cols-1 sm:max-w-150 gap-6">
         <div>{memoizedIdea}</div>
         <ul>
           {ideas.map((idea: IdeaType) => {
