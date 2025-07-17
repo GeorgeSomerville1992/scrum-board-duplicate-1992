@@ -82,8 +82,7 @@ export const Home = () => {
   // new ideas are created
   const memoizedIdea = useMemo(
     () => <Idea handleCreate={handleCreate} handleEdit={handleEdit} idea={defaultIdea} autoFocus />,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ideas.length],
+    [defaultIdea, handleCreate, handleEdit],
   );
 
   return (
