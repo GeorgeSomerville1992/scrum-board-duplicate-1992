@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Idea } from '../Idea/Idea';
 import type { IdeaType } from '../../types';
 import { Sort } from '../Sort/Sort';
@@ -8,13 +8,15 @@ import { sortApi } from '../Sort/sortApi';
 
 export const Home = () => {
   // Default idea used as placeholder.
-  const defaultIdea = {
-    id: 0,
-    title: '',
-    description: '',
-    createdAt: '',
-    modifiedAt: '',
-  };
+  const defaultIdea = useMemo(() => {
+    return {
+      id: 0,
+      title: '',
+      description: '',
+      createdAt: '',
+      modifiedAt: '',
+    };
+  }, []);
 
   const [ideas, setIdeas] = useStorage('ideas', []);
   const [notification, setNotification] = useState<string>('');
@@ -32,31 +34,37 @@ export const Home = () => {
     }
   }, [notification]);
 
-  const handleCreate = (idea: Pick<IdeaType, 'title' | 'description'>) => {
-    const newIdea = {
-      id: ideas.length + 1,
-      ...idea,
-    };
+  const handleCreate = useCallback(
+    (idea: Pick<IdeaType, 'title' | 'description'>) => {
+      const newIdea = {
+        id: ideas.length + 1,
+        ...idea,
+      };
 
-    setIdeas([...ideas, newIdea]);
-    setNotification('created');
-  };
+      setIdeas([...ideas, newIdea]);
+      setNotification('created');
+    },
+    [ideas, setIdeas],
+  );
 
-  const handleEdit = (id: number, IdeaInput: Pick<IdeaType, 'title' | 'description'>) => {
-    const updatedIdeas = ideas.map((idea: IdeaType) => {
-      if (idea.id === id) {
-        return {
-          ...idea,
-          ...IdeaInput,
-          modifiedAt: new Date(),
-        };
-      }
-      return idea;
-    });
+  const handleEdit = useCallback(
+    (id: number, IdeaInput: Pick<IdeaType, 'title' | 'description'>) => {
+      const updatedIdeas = ideas.map((idea: IdeaType) => {
+        if (idea.id === id) {
+          return {
+            ...idea,
+            ...IdeaInput,
+            modifiedAt: new Date(),
+          };
+        }
+        return idea;
+      });
 
-    setIdeas([...updatedIdeas]);
-    setNotification('updated');
-  };
+      setIdeas([...updatedIdeas]);
+      setNotification('updated');
+    },
+    [ideas, setIdeas],
+  );
 
   const handleSort = (sort: keyof typeof sortApi) => {
     // Do not sort if default is selected
@@ -94,12 +102,12 @@ export const Home = () => {
         </button>
       </div>
       {notification && <Notification notification={notification} />}
-      <section className="sm:p-12 p-3 grid grid-cols-1 sm:max-w-150 gap-6">
-        <div>{memoizedIdea}</div>
-        <ul>
+      <section className="sm:p-12 p-3 sm:max-w-150">
+        <>{memoizedIdea}</>
+        <ul className="grid-cols-1 grid gap-6 mt-6">
           {ideas.map((idea: IdeaType) => {
             return (
-              <li key={idea.id} className="mb-4">
+              <li key={idea.id}>
                 <Idea
                   handleCreate={handleCreate}
                   handleEdit={handleEdit}

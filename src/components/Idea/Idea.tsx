@@ -146,7 +146,7 @@ export const Idea = ({ handleCreate, handleEdit, idea, handleDelete, autoFocus }
         )}
 
         {createdAt && (
-          <div className="text-xs text-(--color-input-text) flex justify-between flex-row w-full sm:flex-col sm:w-auto sm:items-end sm:flex-grow-1 sm:h-full sm:gap-2">
+          <div className="text-xs text-(--color-input-text) flex justify-between flex-row w-full sm:flex-col sm:w-auto sm:items-end sm:flex-grow-1 sm:h-full sm:gap-1">
             {modifiedAt && <p>Modified at: {format(modifiedAt, 'dd/MM/yyyy HH:mm:ss')}</p>}
             {createdAt && <p>Created at: {format(createdAt, 'dd/MM/yyyy HH:mm:ss')}</p>}
           </div>
